@@ -1,98 +1,49 @@
-import { createMockStepExecutionContext } from '@jupiterone/integration-sdk-testing';
+import {
+  createMockStepExecutionContext,
+  GraphObjectSchema,
+  MockJobState,
+} from '@jupiterone/integration-sdk-testing';
 
-import { IntegrationConfig } from '../config';
-import { fetchGroups, fetchUsers } from './access';
-import { fetchAccountDetails } from './account';
+import { Recording, setupRecording } from '../../test';
+import { projectClass, projectSchema } from '../../test/schemas';
+import { fetchProjects } from './fetch-projects';
 
-const DEFAULT_CLIENT_ID = 'dummy-acme-client-id';
-const DEFAULT_CLIENT_SECRET = 'dummy-acme-client-secret';
+let recording: Recording;
 
-const integrationConfig: IntegrationConfig = {
-  clientId: process.env.CLIENT_ID || DEFAULT_CLIENT_ID,
-  clientSecret: process.env.CLIENT_SECRET || DEFAULT_CLIENT_SECRET,
-};
-
-test('should collect data', async () => {
-  const context = createMockStepExecutionContext<IntegrationConfig>({
-    instanceConfig: integrationConfig,
-  });
-
-  // Simulates dependency graph execution.
-  // See https://github.com/JupiterOne/sdk/issues/262.
-  await fetchAccountDetails(context);
-  await fetchUsers(context);
-  await fetchGroups(context);
-
-  // Review snapshot, failure is a regression
-  expect({
-    numCollectedEntities: context.jobState.collectedEntities.length,
-    numCollectedRelationships: context.jobState.collectedRelationships.length,
-    collectedEntities: context.jobState.collectedEntities,
-    collectedRelationships: context.jobState.collectedRelationships,
-    encounteredTypes: context.jobState.encounteredTypes,
-  }).toMatchSnapshot();
-
-  const accounts = context.jobState.collectedEntities.filter((e) =>
-    e._class.includes('Account'),
-  );
-  expect(accounts.length).toBeGreaterThan(0);
-  expect(accounts).toMatchGraphObjectSchema({
-    _class: ['Account'],
-    schema: {
-      additionalProperties: false,
-      properties: {
-        _type: { const: 'acme_account' },
-        manager: { type: 'string' },
-        _rawData: {
-          type: 'array',
-          items: { type: 'object' },
-        },
-      },
-      required: ['manager'],
-    },
-  });
-
-  const users = context.jobState.collectedEntities.filter((e) =>
-    e._class.includes('User'),
-  );
-  expect(users.length).toBeGreaterThan(0);
-  expect(users).toMatchGraphObjectSchema({
-    _class: ['User'],
-    schema: {
-      additionalProperties: false,
-      properties: {
-        _type: { const: 'acme_user' },
-        firstName: { type: 'string' },
-        _rawData: {
-          type: 'array',
-          items: { type: 'object' },
-        },
-      },
-      required: ['firstName'],
-    },
-  });
-
-  const userGroups = context.jobState.collectedEntities.filter((e) =>
-    e._class.includes('UserGroup'),
-  );
-  expect(userGroups.length).toBeGreaterThan(0);
-  expect(userGroups).toMatchGraphObjectSchema({
-    _class: ['UserGroup'],
-    schema: {
-      additionalProperties: false,
-      properties: {
-        _type: { const: 'acme_group' },
-        logoLink: {
-          type: 'string',
-          // Validate that the `logoLink` property has a URL format
-          format: 'url',
-        },
-        _rawData: {
-          type: 'array',
-          items: { type: 'object' },
-        },
-      },
-      required: ['logoLink'],
-    },
-  });
+afterEach(async () => {
+  await recording.stop();
 });
+
+test('collect', async () => {
+  recording = setupRecording({
+    directory: __dirname,
+    name: 'collect',
+  });
+
+  const context = createMockStepExecutionContext({
+    instanceConfig: {
+      baseUrl: process.env.BASE_URL || 'http://localhost:9000',
+      apiToken: process.env.API_TOKEN || 'string-value',
+    },
+  });
+
+  await fetchProjects(context);
+
+  verifyCollectedEntities(context.jobState, projectClass, projectSchema);
+});
+
+function verifyCollectedEntities(
+  jobState: MockJobState,
+  _class: string[],
+  schema: GraphObjectSchema,
+): void {
+  const entities = jobState.collectedEntities.filter((e) => {
+    const entityClass = Array.isArray(e._class) ? e._class : Array(e._class);
+    return entityClass.sort().every((e) => _class.includes(e));
+  });
+  expect(entities.length).toBeGreaterThan(0);
+  expect(entities).toMatchGraphObjectSchema({
+    _class,
+    schema,
+  });
+}

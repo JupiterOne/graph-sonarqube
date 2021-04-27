@@ -1,12 +1,11 @@
 import { IntegrationInvocationConfig } from '@jupiterone/integration-sdk-core';
-import { integrationSteps } from './steps';
-import {
-  validateInvocation,
-  IntegrationConfig,
-  instanceConfigFields,
-} from './config';
 
-export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = {
+import instanceConfigFields from './instanceConfigFields';
+import { integrationSteps } from './steps';
+import { SonarqubeIntegrationConfig } from './types';
+import validateInvocation from './validateInvocation';
+
+export const invocationConfig: IntegrationInvocationConfig<SonarqubeIntegrationConfig> = {
   instanceConfigFields,
   validateInvocation,
   integrationSteps,
