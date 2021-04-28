@@ -50,20 +50,16 @@ export class SonarqubeClient {
   }
 
   async fetchAuthenticationValidate(): Promise<ValidationResponse> {
-    return this.makeSingularRequest(
-      HttpMethod.GET,
-      '/authentication/validate',
-    ) as Promise<ValidationResponse>;
+    return this.makeSingularRequest('/authentication/validate') as Promise<
+      ValidationResponse
+    >;
   }
 
-  private async makeRequest(
-    method: HttpMethod,
-    endpoint: string,
-  ): Promise<Response> {
+  private async makeRequest(endpoint: string): Promise<Response> {
     const resourceUrl = `${this.baseUrl}/api${endpoint}`;
 
     const response: Response = await fetch(resourceUrl, {
-      method,
+      method: 'get',
       headers: {
         Authorization: `Basic ${this.authorization}`,
       },
@@ -92,11 +88,8 @@ export class SonarqubeClient {
     return response;
   }
 
-  private async makeSingularRequest<T>(
-    method: HttpMethod,
-    url: string,
-  ): Promise<T | null> {
-    const response = await this.makeRequest(method, `${url}`);
+  private async makeSingularRequest<T>(url: string): Promise<T | null> {
+    const response = await this.makeRequest(`${url}`);
 
     return response.json();
   }
@@ -105,53 +98,34 @@ export class SonarqubeClient {
     endpoint: string,
     iterableObjectKey: T,
     iteratee: ResourceIteratee<U>,
-    options?: {
-      onPageError?: PageErrorHandler;
-      params?: NodeJS.Dict<string | string[]>;
-    },
   ): Promise<void> {
     let page = 1;
 
     do {
       const searchParams = new URLSearchParams({
-        ...options?.params,
         page: String(page),
         per_page: String(ITEMS_PER_PAGE),
       });
 
       const parametizedEndpoint = `${endpoint}?${searchParams.toString()}`;
 
-      let response: Response | undefined;
-      try {
-        response = await this.makeRequest(HttpMethod.GET, parametizedEndpoint);
-      } catch (err) {
-        if (options?.onPageError) {
-          await options.onPageError({ err, endpoint });
-        } else {
-          throw err;
-        }
-      }
-
-      if (response) {
-        const result: PaginatedResponse<T, U> = await response.json();
-        if (Array.isArray(result[iterableObjectKey])) {
-          for (const resource of result[iterableObjectKey]) {
-            await iteratee(resource);
-          }
-        } else {
-          throw new IntegrationError({
-            code: 'UNEXPECTED_RESPONSE_DATA',
-            message: `Expected a collection of resources but type was ${typeof result}`,
-          });
-        }
-
-        if (page != result.paging.total) {
-          page += 1;
-        } else {
-          page = 0; // stop pagination, we've reached the end of the line
+      const response: Response = await this.makeRequest(parametizedEndpoint);
+      const result: PaginatedResponse<T, U> = await response.json();
+      if (Array.isArray(result[iterableObjectKey])) {
+        for (const resource of result[iterableObjectKey]) {
+          await iteratee(resource);
         }
       } else {
-        page = 0; // stop pagination, no page info without response
+        throw new IntegrationError({
+          code: 'UNEXPECTED_RESPONSE_DATA',
+          message: `Expected a collection of resources but type was ${typeof result}`,
+        });
+      }
+
+      if (result[iterableObjectKey].length) {
+        page = 0; // stop pagination, we've reached the end of the line
+      } else {
+        page += 1;
       }
     } while (page);
   }

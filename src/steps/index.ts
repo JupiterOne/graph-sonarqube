@@ -4,10 +4,10 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import { SonarqubeIntegrationConfig } from '../types';
-import projectStep from './fetch-projects';
+import { projectSteps } from './project';
 
 const integrationSteps: Step<
   IntegrationStepExecutionContext<SonarqubeIntegrationConfig>
->[] = [projectStep];
+>[] = [...projectSteps];
 
 export { integrationSteps };

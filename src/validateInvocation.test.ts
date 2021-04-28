@@ -1,8 +1,4 @@
-import {
-  IntegrationProviderAuthenticationError,
-  IntegrationProviderAuthorizationError,
-  IntegrationValidationError,
-} from '@jupiterone/integration-sdk-core';
+import { IntegrationValidationError } from '@jupiterone/integration-sdk-core';
 import {
   createMockExecutionContext,
   Recording,
@@ -12,70 +8,91 @@ import {
 import { SonarqubeIntegrationConfig } from './types';
 import validateInvocation from './validateInvocation';
 
-test('requires valid config', async () => {
-  const executionContext = createMockExecutionContext<
-    SonarqubeIntegrationConfig
-  >({
-    instanceConfig: {} as SonarqubeIntegrationConfig,
-  });
-
-  await expect(validateInvocation(executionContext)).rejects.toThrowError(
-    IntegrationValidationError,
-  );
-});
-
-describe('api response', () => {
+describe('#validateInvocation', () => {
   let recording: Recording;
 
   afterEach(async () => {
     await recording.stop();
   });
 
-  test('authentication error', async () => {
+  test('should requires valid config', async () => {
     recording = setupRecording({
-      directory: '__recordings__',
-      name: 'validateInvocationAuthenticationError',
-    });
-
-    recording.server.any().intercept((req, res) => {
-      res.status(401);
+      directory: __dirname,
+      name: 'validateInvocationShouldRequireValidConfig',
+      options: {
+        matchRequestsBy: {
+          url: {
+            hostname: false,
+          },
+        },
+        recordFailedRequests: true,
+      },
     });
 
     const executionContext = createMockExecutionContext<
       SonarqubeIntegrationConfig
     >({
-      instanceConfig: {
-        baseUrl: 'https://example.com',
-        apiToken: 'INVALID',
-      },
+      instanceConfig: {} as SonarqubeIntegrationConfig,
     });
 
     await expect(validateInvocation(executionContext)).rejects.toThrowError(
-      IntegrationProviderAuthenticationError,
+      IntegrationValidationError,
     );
   });
 
-  test('authorization error', async () => {
+  test('should require a valid api token', async () => {
     recording = setupRecording({
-      directory: '__recordings__',
-      name: 'validateInvocationAuthorizationError',
-    });
-
-    recording.server.any().intercept((req, res) => {
-      res.status(403);
+      directory: __dirname,
+      name: 'validateInvocationShouldRequireAValidAPIToken',
+      options: {
+        matchRequestsBy: {
+          url: {
+            hostname: false,
+          },
+        },
+        recordFailedRequests: true,
+      },
     });
 
     const executionContext = createMockExecutionContext<
       SonarqubeIntegrationConfig
     >({
       instanceConfig: {
-        baseUrl: 'https://example.com',
+        baseUrl: process.env.BASE_URL || 'http://localhost:9000',
         apiToken: 'INVALID',
       },
     });
 
     await expect(validateInvocation(executionContext)).rejects.toThrowError(
-      IntegrationProviderAuthorizationError,
+      IntegrationValidationError,
+    );
+  });
+
+  test('should require a valid base url', async () => {
+    recording = setupRecording({
+      directory: __dirname,
+      name: 'validateInvocationShouldRequireAValidBaseUrl',
+      options: {
+        matchRequestsBy: {
+          url: {
+            hostname: false,
+          },
+        },
+        recordFailedRequests: true,
+      },
+    });
+
+    const executionContext = createMockExecutionContext<
+      SonarqubeIntegrationConfig
+    >({
+      instanceConfig: {
+        baseUrl: 'http://example.com',
+        apiToken: process.env.API_TOKEN || 'string-value',
+      },
+    });
+
+    await expect(validateInvocation(executionContext)).rejects.toThrowError(
+      IntegrationValidationError,
     );
   });
 });

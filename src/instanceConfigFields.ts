@@ -1,7 +1,10 @@
 import { IntegrationInstanceConfigFieldMap } from '@jupiterone/integration-sdk-core';
 
 const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
-  sonarqubeUserToken: {
+  baseUrl: {
+    type: 'string',
+  },
+  apiToken: {
     type: 'string',
     mask: true,
   },

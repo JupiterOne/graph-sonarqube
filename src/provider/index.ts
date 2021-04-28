@@ -1,5 +1,3 @@
-import { IntegrationInstance } from '@jupiterone/integration-sdk-core';
-import { SonarqubeIntegrationConfig } from '../types';
 import { SonarqubeClient } from './SonarqubeClient';
 
 type SonarqubeClientConfig = {
@@ -12,7 +10,3 @@ export function createSonarqubeClient(
 ): SonarqubeClient {
   return new SonarqubeClient(config.baseUrl, config.apiToken);
 }
-
-export type ClientCreator = (
-  client: IntegrationInstance<SonarqubeIntegrationConfig>,
-) => SonarqubeClient;

@@ -4,19 +4,11 @@ import {
   IntegrationStepExecutionContext,
 } from '@jupiterone/integration-sdk-core';
 
-import { Entities, Steps } from '../../constants';
-import { createProjectEntity } from '../../converters';
+import { Entities, Steps } from '../constants';
+import { createProjectEntity } from './converter';
 import { createSonarqubeClient } from '../../provider';
 import { SonarqubeProject } from '../../provider/types';
 import { SonarqubeIntegrationConfig } from '../../types';
-
-const step: IntegrationStep<SonarqubeIntegrationConfig> = {
-  id: Steps.PROJECTS,
-  name: 'Fetch projects',
-  entities: [Entities.PROJECT],
-  executionHandler: fetchProjects,
-  relationships: [],
-};
 
 export async function fetchProjects({
   instance,
@@ -40,4 +32,12 @@ export async function fetchProjects({
   });
 }
 
-export default step;
+export const projectSteps: IntegrationStep<SonarqubeIntegrationConfig>[] = [
+  {
+    id: Steps.PROJECTS,
+    name: 'Projects',
+    entities: [Entities.PROJECT],
+    executionHandler: fetchProjects,
+    relationships: [],
+  },
+];

@@ -22,10 +22,16 @@ export default async function validateInvocation({
   }
 
   const client = createSonarqubeClient(instance.config);
-  const resp = await client.fetchAuthenticationValidate();
-  if (!resp.valid) {
+  try {
+    const resp = await client.fetchAuthenticationValidate();
+    if (!resp.valid) {
+      throw new IntegrationValidationError(
+        'Integration configration credentials marked invalid by Sonarqube',
+      );
+    }
+  } catch {
     throw new IntegrationValidationError(
-      'Integration configration credentials marked invalid by Sonarqube',
+      'Could not verify credentials against provided Sonarqube baseUrl',
     );
   }
 }
