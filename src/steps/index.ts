@@ -1,6 +1,13 @@
-import { accountSteps } from './account';
-import { accessSteps } from './access';
+import {
+  IntegrationStepExecutionContext,
+  Step,
+} from '@jupiterone/integration-sdk-core';
 
-const integrationSteps = [...accountSteps, ...accessSteps];
+import { SonarqubeIntegrationConfig } from '../types';
+import { projectSteps } from './project';
+
+const integrationSteps: Step<
+  IntegrationStepExecutionContext<SonarqubeIntegrationConfig>
+>[] = [...projectSteps];
 
 export { integrationSteps };

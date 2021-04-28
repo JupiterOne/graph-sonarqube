@@ -1,28 +1,43 @@
 # Development
 
-Add details here to give a brief overview of how to work with the provider APIs.
-Please reference any SDKs or API docs used to help build the integration here.
-
 ## Prerequisites
 
-Supply details about software or tooling (like maybe Docker or Terraform) that
-is needed for development here.
+### Docker
 
-Please supply references to documentation that details how to install those
-dependencies here.
+You need [docker](https://www.docker.com/get-started) installed to run Sonarqube
+in a container.
 
-Tools like Node.js and NPM are already covered in the [README](../README.md) so
-don't bother documenting that here.
+### Sonarqube Container Image
 
-## Provider account setup
+You need to have the sonarqube docker image running:
 
-Please provide information about the steps needed to create an account with a
-provider. Images and references to a provider's documentation is very helpful
-for new developers picking up your work.
+```
+docker run -d --name sonarqube -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true -p 9000:9000 sonarqube:latest
+```
 
-## Authentication
+When you go to `localhost:9000` Sonarqube will prompt you to login (default
+credentials `admin:admin`) and update the default credentials.
 
-Supply details here for information on how to authenticate with a provider so
-that developers have an idea of what's needed to hit APIs. It may be useful to
-provide explanations for each value specified in the
-[`IntegrationInstanceConfigFieldMap`](../src/config.ts).
+### Sonarqube Setup for Integration
+
+To have a useful set of data to test against you'll want to setup at least one
+ALM integration. You can find documentation for
+[Github](https://docs.sonarqube.org/latest/analysis/github-integration/) and
+other ALMs in the developer [documents](https://docs.sonarqube.org/latest/)
+under ALM Integration. After setting up an integration you'll be able to create
+projects that are backed by a repository on your ALM.
+
+## Execute the Integration
+
+With `<graph-sonarqube>/.env` in place, simply run `yarn start`!
+
+## Running Tests
+
+Many of the tests are written to make API requests, with requests and responses
+recorded by Polly.js to allow for playback in CI/CD environments. An
+[integration configuration for testing](../test/integrationInstanceConfig.ts)
+works to ensure that there is an appropriate configuration to replay the
+recordings.
+
+During development, the API clients will use the `<graph-sonarqube>/.env` file
+(thanks to `jest.config.js`).
