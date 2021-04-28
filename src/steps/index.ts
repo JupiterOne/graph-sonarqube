@@ -5,9 +5,10 @@ import {
 
 import { SonarqubeIntegrationConfig } from '../types';
 import { projectSteps } from './project';
+import { userGroupSteps } from './user-group';
 
 const integrationSteps: Step<
   IntegrationStepExecutionContext<SonarqubeIntegrationConfig>
->[] = [...projectSteps];
+>[] = [...projectSteps, ...userGroupSteps];
 
 export { integrationSteps };

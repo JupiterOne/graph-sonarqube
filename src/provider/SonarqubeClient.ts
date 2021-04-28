@@ -12,6 +12,7 @@ import {
   SonarqubeProject,
   PaginatedResponse,
   ValidationResponse,
+  SonarqubeUserGroup,
 } from './types';
 
 /**
@@ -45,6 +46,16 @@ export class SonarqubeClient {
     return this.iterateResources<'components', SonarqubeProject>(
       '/projects/search',
       'components',
+      iteratee,
+    );
+  }
+
+  async iterateUserGroups(
+    iteratee: ResourceIteratee<SonarqubeUserGroup>,
+  ): Promise<void> {
+    return this.iterateResources<'groups', SonarqubeUserGroup>(
+      '/user_groups/search',
+      'groups',
       iteratee,
     );
   }
