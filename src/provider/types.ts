@@ -15,6 +15,19 @@ export interface SonarqubeUserGroup {
   default: boolean;
 }
 
+export interface SonarqubeUser {
+  login: string;
+  name: string;
+  active: boolean;
+  email: string;
+  groups: string[];
+  tokensCount: number;
+  local: boolean;
+  externalIdentity: string;
+  externalProvider: string;
+  avatar: string;
+}
+
 export interface Pagination {
   pageIndex: number;
   pageSize: number;

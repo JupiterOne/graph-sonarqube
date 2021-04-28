@@ -18,7 +18,11 @@
 ## Requirements
 
 - JupiterOne requires an API token. You need permission to create a user in
-  Sonarqube that will be used to obtain the API token.
+  Sonarqube that will be used to obtain the API token. The token should have the
+  `Administer System` permission to allow the ability to pull extra user
+  metadata. More information on this can be found in the sonarqube api
+  documentation of your instance
+  (`<your-instance-url>/web_api/api/users/search`).
 - You must have permission in JupiterOne to install new integrations.
 
 ## Support

@@ -1,6 +1,7 @@
 export const Steps = {
   PROJECTS: 'fetch-projects',
   USER_GROUPS: 'fetch-user-groups',
+  USERS: 'fetch-users',
 };
 
 export const Entities = {
@@ -13,5 +14,10 @@ export const Entities = {
     resourceName: 'UserGroup',
     _type: 'sonarqube_user_group',
     _class: ['UserGroup'],
+  },
+  USER: {
+    resourceName: 'User',
+    _type: 'sonarqube_user',
+    _class: ['User'],
   },
 };
