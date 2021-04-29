@@ -1,7 +1,7 @@
 {
-  "name": "@jupiterone/integration-template",
-  "version": "0.0.0",
-  "description": "A JupiterOne Integration",
+  "name": "@jupiterone/graph-sonarqube",
+  "version": "0.1.0",
+  "description": "Sonarqube integration for JupiterOne",
   "license": "MPL-2.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

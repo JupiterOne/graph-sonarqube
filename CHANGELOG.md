@@ -7,3 +7,12 @@ and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## 0.1.0 2021-04-29
+
+### Added
+
+- User Group Entity
+- User Entity
+- Project Entity
+- User Group User Relationship
