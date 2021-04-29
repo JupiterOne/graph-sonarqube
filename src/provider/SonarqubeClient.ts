@@ -77,9 +77,9 @@ export class SonarqubeClient {
     );
   }
 
-  async iterateUsersGroups(
-    iteratee: ResourceIteratee<SonarqubeUserGroup>,
+  async iterateGroupsAssignedToUser(
     login: string,
+    iteratee: ResourceIteratee<SonarqubeUserGroup>,
     params?: NodeJS.Dict<string | string[]>,
   ): Promise<void> {
     return this.iterateResources<'groups', SonarqubeUserGroup>(

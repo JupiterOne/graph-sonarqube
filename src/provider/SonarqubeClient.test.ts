@@ -243,7 +243,7 @@ describe('#iterateUsers', () => {
   });
 });
 
-describe('#iterateUsersGroups', () => {
+describe('#iterateGroupsAssignedToUser', () => {
   let recording: Recording;
 
   afterEach(async () => {
@@ -253,7 +253,7 @@ describe('#iterateUsersGroups', () => {
   test('should fetch users user groups with valid config', async () => {
     recording = setupRecording({
       directory: __dirname,
-      name: 'iterateUsersGroupsShouldFetchUserGroupsWithValidConfig',
+      name: 'iterateGroupsAssignedToUserShouldFetchUserGroupsWithValidConfig',
       options: {
         matchRequestsBy: {
           url: {
@@ -274,9 +274,9 @@ describe('#iterateUsersGroups', () => {
     const provider = createSonarqubeClient(context.instance.config);
 
     const results: SonarqubeUserGroup[] = [];
-    await provider.iterateUsersGroups((userGroup) => {
+    await provider.iterateGroupsAssignedToUser('testUser', (userGroup) => {
       results.push(userGroup);
-    }, 'testUser');
+    });
 
     expect(results).toEqual(
       expect.arrayContaining([

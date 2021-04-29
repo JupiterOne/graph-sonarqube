@@ -103,7 +103,7 @@ describe('#buildUserGroupUserRelationships', () => {
       schema: {
         properties: {
           _class: { const: RelationshipClass.HAS },
-          _type: { const: 'sonarqube_user_group_has_user' },
+          _type: { const: Relationships.GROUP_HAS_USER._type },
         },
       },
     });

@@ -42,28 +42,33 @@ export async function buildUserGroupUserRelationships({
   instance,
   jobState,
 }: IntegrationStepExecutionContext<SonarqubeIntegrationConfig>) {
+  const client = createSonarqubeClient(instance.config);
   await jobState.iterateEntities(
     { _type: Entities.USER._type },
     async (userEntity) => {
-      const client = createSonarqubeClient(instance.config);
-      await client.iterateUsersGroups(async (userGroup) => {
-        const userGroupEntityId = createUserGroupEntityIdentifier(userGroup.id);
-        const userGroupEntity = await jobState.findEntity(userGroupEntityId);
-
-        if (!userGroupEntity) {
-          throw new IntegrationMissingKeyError(
-            `Expected user group with key to exist (key=${userGroupEntityId})`,
+      await client.iterateGroupsAssignedToUser(
+        userEntity.login as string,
+        async (userGroup) => {
+          const userGroupEntityId = createUserGroupEntityIdentifier(
+            userGroup.id,
           );
-        }
+          const userGroupEntity = await jobState.findEntity(userGroupEntityId);
 
-        await jobState.addRelationship(
-          createDirectRelationship({
-            _class: RelationshipClass.HAS,
-            from: userGroupEntity,
-            to: userEntity,
-          }),
-        );
-      }, userEntity.login as string);
+          if (!userGroupEntity) {
+            throw new IntegrationMissingKeyError(
+              `Expected user group with key to exist (key=${userGroupEntityId})`,
+            );
+          }
+
+          await jobState.addRelationship(
+            createDirectRelationship({
+              _class: RelationshipClass.HAS,
+              from: userGroupEntity,
+              to: userEntity,
+            }),
+          );
+        },
+      );
     },
   );
 }
