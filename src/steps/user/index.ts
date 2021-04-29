@@ -7,7 +7,6 @@ import {
 import { Entities, Steps } from '../constants';
 import { createUserEntity } from './converter';
 import { createSonarqubeClient } from '../../provider';
-import { SonarqubeUser } from '../../provider/types';
 import { SonarqubeIntegrationConfig } from '../../types';
 
 export async function fetchUsers({
@@ -15,19 +14,12 @@ export async function fetchUsers({
   jobState,
 }: IntegrationStepExecutionContext<SonarqubeIntegrationConfig>) {
   const client = createSonarqubeClient(instance.config);
-  const userKeys = new Set<string>();
-  const addUserEntity = async (user: SonarqubeUser): Promise<Entity> => {
-    const userEntity = createUserEntity(user);
-    if (!userKeys.has(userEntity._key)) {
-      await jobState.addEntity(userEntity);
-      userKeys.add(userEntity._key);
-    }
-    return userEntity;
-  };
 
+  const convertedUsers: Entity[] = [];
   await client.iterateUsers(async (user) => {
-    await addUserEntity(user);
+    convertedUsers.push(createUserEntity(user));
   });
+  await jobState.addEntities(convertedUsers);
 }
 
 export const userSteps: IntegrationStep<SonarqubeIntegrationConfig>[] = [
