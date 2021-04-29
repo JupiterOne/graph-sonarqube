@@ -1,6 +1,7 @@
 import { IntegrationValidationError } from '@jupiterone/integration-sdk-core';
 import {
   createMockExecutionContext,
+  mutations,
   Recording,
   setupRecording,
 } from '@jupiterone/integration-sdk-testing';
@@ -52,6 +53,7 @@ describe('#validateInvocation', () => {
         },
         recordFailedRequests: true,
       },
+      mutateEntry: mutations.unzipGzippedRecordingEntry,
     });
 
     const executionContext = createMockExecutionContext<
@@ -80,6 +82,7 @@ describe('#validateInvocation', () => {
         },
         recordFailedRequests: true,
       },
+      mutateEntry: mutations.unzipGzippedRecordingEntry,
     });
 
     const executionContext = createMockExecutionContext<

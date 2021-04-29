@@ -79,9 +79,10 @@ https://github.com/JupiterOne/sdk/blob/master/docs/integrations/development.md
 
 The following entities are created:
 
-| Resources | Entity `_type`      | Entity `_class` |
-| --------- | ------------------- | --------------- |
-| Project   | `sonarqube_project` | `Project`       |
+| Resources | Entity `_type`         | Entity `_class` |
+| --------- | ---------------------- | --------------- |
+| Project   | `sonarqube_project`    | `Project`       |
+| UserGroup | `sonarqube_user_group` | `UserGroup`     |
 
 <!--
 ********************************************************************************

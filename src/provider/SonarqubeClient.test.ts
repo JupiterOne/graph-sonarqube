@@ -7,9 +7,9 @@ import {
 } from '@jupiterone/integration-sdk-testing';
 
 import { createSonarqubeClient } from '.';
-import { SonarqubeProject } from './types';
+import { SonarqubeProject, SonarqubeUserGroup } from './types';
 
-describe('#iterateProjects', () => {
+describe('#SonarqubeClient', () => {
   let recording: Recording;
 
   afterEach(async () => {
@@ -19,7 +19,7 @@ describe('#iterateProjects', () => {
   test('should fail with invalid token', async () => {
     recording = setupRecording({
       directory: __dirname,
-      name: 'iterateProjectsShouldFailWithInvalidToken',
+      name: 'SonarqubeClientShouldFailWithInvalidToken',
       options: {
         matchRequestsBy: {
           url: {
@@ -43,6 +43,14 @@ describe('#iterateProjects', () => {
         // do nothing
       }),
     ).rejects.toThrowError(IntegrationProviderAuthenticationError);
+  });
+});
+
+describe('#iterateProjects', () => {
+  let recording: Recording;
+
+  afterEach(async () => {
+    await recording.stop();
   });
 
   test('should fetch projects with valid config', async () => {
@@ -82,6 +90,55 @@ describe('#iterateProjects', () => {
           revision: expect.any(String),
           visibility: expect.any(String),
           lastAnalysisDate: expect.any(String),
+        }),
+      ]),
+    );
+  });
+});
+
+describe('#iterateUserGroups', () => {
+  let recording: Recording;
+
+  afterEach(async () => {
+    await recording.stop();
+  });
+
+  test('should fetch user groups with valid config', async () => {
+    recording = setupRecording({
+      directory: __dirname,
+      name: 'iterateUserGroupsShouldFetchUserGroupsWithValidConfig',
+      options: {
+        matchRequestsBy: {
+          url: {
+            hostname: false,
+          },
+        },
+        recordFailedRequests: true,
+      },
+      mutateEntry: mutations.unzipGzippedRecordingEntry,
+    });
+
+    const context = createMockStepExecutionContext({
+      instanceConfig: {
+        baseUrl: process.env.BASE_URL || 'http://localhost:9000',
+        apiToken: process.env.API_TOKEN || 'string-value',
+      },
+    });
+    const provider = createSonarqubeClient(context.instance.config);
+
+    const results: SonarqubeUserGroup[] = [];
+    await provider.iterateUserGroups((userGroup) => {
+      results.push(userGroup);
+    });
+
+    expect(results).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: expect.any(String),
+          name: expect.any(String),
+          description: expect.any(String),
+          membersCount: expect.any(Number),
+          default: expect.any(Boolean),
         }),
       ]),
     );
