@@ -19,7 +19,7 @@ describe('#createUserEntity', () => {
 
     expect(entity).toEqual(
       expect.objectContaining({
-        _key: 'userlogin1',
+        _key: 'sonarqube-user:userlogin1',
         _type: 'sonarqube_user',
         _class: ['User'],
         username: 'userlogin1',

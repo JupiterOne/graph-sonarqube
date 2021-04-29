@@ -35,36 +35,28 @@ describe('#fetchUsers', () => {
 
     expect(context.jobState.collectedEntities).toHaveLength(2);
     expect(context.jobState.collectedRelationships).toHaveLength(0);
-    expect(context.jobState.collectedEntities).toEqual([
-      expect.objectContaining({
-        _key: expect.any(String),
-        _class: ['User'],
-        _type: 'sonarqube_user',
-        username: expect.any(String),
-        shortLoginId: expect.any(String),
-        name: expect.any(String),
-        login: expect.any(String),
-        active: expect.any(Boolean),
-        tokensCount: expect.any(Number),
-        local: expect.any(Boolean),
-        externalIdentity: expect.any(String),
-        externalProvider: expect.any(String),
-      }),
-      expect.objectContaining({
-        _key: expect.any(String),
-        _class: ['User'],
-        _type: 'sonarqube_user',
-        username: expect.any(String),
-        email: expect.any(String),
-        shortLoginId: expect.any(String),
-        name: expect.any(String),
-        login: expect.any(String),
-        active: expect.any(Boolean),
-        tokensCount: expect.any(Number),
-        local: expect.any(Boolean),
-        externalIdentity: expect.any(String),
-        externalProvider: expect.any(String),
-      }),
-    ]);
+    expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
+      _class: ['User'],
+      schema: {
+        additionalProperties: true,
+        properties: {
+          _type: { const: 'sonarqube_user' },
+          _key: { type: 'string' },
+          username: { type: 'string' },
+          shortLoginId: { type: 'string' },
+          name: { type: 'string' },
+          active: { type: 'boolean' },
+          tokensCount: { type: 'number' },
+          local: { type: 'boolean' },
+          externalIdentity: { type: 'string' },
+          externalProvider: { type: 'string' },
+          _rawData: {
+            type: 'array',
+            items: { type: 'object' },
+          },
+        },
+        required: ['login'],
+      },
+    });
   });
 });

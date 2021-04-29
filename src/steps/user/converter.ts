@@ -6,12 +6,17 @@ import {
 import { Entities } from '../constants';
 import { SonarqubeUser } from '../../provider/types';
 
+const USER_LOGIN_PREFIX = 'sonarqube-user';
+export function createUserEntityIdentifier(login: string): string {
+  return `${USER_LOGIN_PREFIX}:${login}`;
+}
+
 export function createUserEntity(user: SonarqubeUser): Entity {
   return createIntegrationEntity({
     entityData: {
       source: user,
       assign: {
-        _key: user.login,
+        _key: createUserEntityIdentifier(user.login),
         _type: Entities.USER._type,
         _class: Entities.USER._class,
         username: user.login,

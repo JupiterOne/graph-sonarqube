@@ -35,27 +35,25 @@ describe('#fetchUserGroups', () => {
 
     expect(context.jobState.collectedEntities).toHaveLength(2);
     expect(context.jobState.collectedRelationships).toHaveLength(0);
-    expect(context.jobState.collectedEntities).toEqual([
-      expect.objectContaining({
-        _key: expect.any(String),
-        _class: ['UserGroup'],
-        _type: 'sonarqube_user_group',
-        id: expect.any(String),
-        name: expect.any(String),
-        description: expect.any(String),
-        membersCount: expect.any(Number),
-        default: expect.any(Boolean),
-      }),
-      expect.objectContaining({
-        _key: expect.any(String),
-        _class: ['UserGroup'],
-        _type: 'sonarqube_user_group',
-        id: expect.any(String),
-        name: expect.any(String),
-        description: expect.any(String),
-        membersCount: expect.any(Number),
-        default: expect.any(Boolean),
-      }),
-    ]);
+    expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
+      _class: ['UserGroup'],
+      schema: {
+        additionalProperties: true,
+        properties: {
+          _type: { const: 'sonarqube_user_group' },
+          _key: { type: 'string' },
+          id: { type: 'string' },
+          name: { type: 'string' },
+          description: { type: 'string' },
+          membersCount: { type: 'number' },
+          default: { type: 'boolean' },
+          _rawData: {
+            type: 'array',
+            items: { type: 'object' },
+          },
+        },
+        required: ['name'],
+      },
+    });
   });
 });
