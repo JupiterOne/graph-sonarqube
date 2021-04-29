@@ -16,7 +16,7 @@ export async function fetchProjects({
   const client = createSonarqubeClient(instance.config);
 
   const convertedProjects: Entity[] = [];
-  await client.iterateProjects(async (project) => {
+  await client.iterateProjects((project) => {
     convertedProjects.push(createProjectEntity(project));
   });
   await jobState.addEntities(convertedProjects);

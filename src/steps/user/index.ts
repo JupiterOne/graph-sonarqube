@@ -16,7 +16,7 @@ export async function fetchUsers({
   const client = createSonarqubeClient(instance.config);
 
   const convertedUsers: Entity[] = [];
-  await client.iterateUsers(async (user) => {
+  await client.iterateUsers((user) => {
     convertedUsers.push(createUserEntity(user));
   });
   await jobState.addEntities(convertedUsers);
