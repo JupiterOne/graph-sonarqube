@@ -7,7 +7,6 @@ import {
 import { Entities, Steps } from '../constants';
 import { createUserGroupEntity } from './converter';
 import { createSonarqubeClient } from '../../provider';
-import { SonarqubeUserGroup } from '../../provider/types';
 import { SonarqubeIntegrationConfig } from '../../types';
 
 export async function fetchUserGroups({
@@ -15,21 +14,12 @@ export async function fetchUserGroups({
   jobState,
 }: IntegrationStepExecutionContext<SonarqubeIntegrationConfig>) {
   const client = createSonarqubeClient(instance.config);
-  const userGroupKeys = new Set<string>();
-  const addUserGroupEntity = async (
-    userGroup: SonarqubeUserGroup,
-  ): Promise<Entity> => {
-    const userGroupEntity = createUserGroupEntity(userGroup);
-    if (!userGroupKeys.has(userGroupEntity._key)) {
-      await jobState.addEntity(userGroupEntity);
-      userGroupKeys.add(userGroupEntity._key);
-    }
-    return userGroupEntity;
-  };
 
-  await client.iterateUserGroups(async (userGroup) => {
-    await addUserGroupEntity(userGroup);
+  const convertedUserGroups: Entity[] = [];
+  await client.iterateUserGroups((userGroup) => {
+    convertedUserGroups.push(createUserGroupEntity(userGroup));
   });
+  await jobState.addEntities(convertedUserGroups);
 }
 
 export const userGroupSteps: IntegrationStep<SonarqubeIntegrationConfig>[] = [

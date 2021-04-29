@@ -11,8 +11,22 @@ export interface SonarqubeUserGroup {
   id: string; // This value is unique but is NOT what ties relationships to users
   name: string; // This value is unique and is what ties relationships to users
   description: string;
-  membersCount: number;
+  membersCount?: number;
+  selected?: string;
   default: boolean;
+}
+
+export interface SonarqubeUser {
+  login: string;
+  name: string;
+  active: boolean;
+  email: string;
+  groups: string[];
+  tokensCount: number;
+  local: boolean;
+  externalIdentity: string;
+  externalProvider: string;
+  avatar: string;
 }
 
 export interface Pagination {

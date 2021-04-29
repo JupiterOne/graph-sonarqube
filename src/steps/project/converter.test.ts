@@ -16,7 +16,7 @@ describe('#createProjectEntity', () => {
 
     expect(entity).toEqual(
       expect.objectContaining({
-        _key: 'project-key-1',
+        _key: 'sonarqube-project:project-key-1',
         _type: 'sonarqube_project',
         _class: ['Project'],
         key: 'project-key-1',

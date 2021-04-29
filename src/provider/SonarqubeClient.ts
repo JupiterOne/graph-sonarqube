@@ -13,6 +13,7 @@ import {
   PaginatedResponse,
   ValidationResponse,
   SonarqubeUserGroup,
+  SonarqubeUser,
 } from './types';
 
 /**
@@ -42,21 +43,50 @@ export class SonarqubeClient {
 
   async iterateProjects(
     iteratee: ResourceIteratee<SonarqubeProject>,
+    params?: NodeJS.Dict<string | string[]>,
   ): Promise<void> {
     return this.iterateResources<'components', SonarqubeProject>(
       '/projects/search',
       'components',
       iteratee,
+      params,
     );
   }
 
   async iterateUserGroups(
     iteratee: ResourceIteratee<SonarqubeUserGroup>,
+    params?: NodeJS.Dict<string | string[]>,
   ): Promise<void> {
     return this.iterateResources<'groups', SonarqubeUserGroup>(
       '/user_groups/search',
       'groups',
       iteratee,
+      params,
+    );
+  }
+
+  async iterateUsers(
+    iteratee: ResourceIteratee<SonarqubeUser>,
+    params?: NodeJS.Dict<string | string[]>,
+  ): Promise<void> {
+    return this.iterateResources<'users', SonarqubeUser>(
+      '/users/search',
+      'users',
+      iteratee,
+      params,
+    );
+  }
+
+  async iterateGroupsAssignedToUser(
+    login: string,
+    iteratee: ResourceIteratee<SonarqubeUserGroup>,
+    params?: NodeJS.Dict<string | string[]>,
+  ): Promise<void> {
+    return this.iterateResources<'groups', SonarqubeUserGroup>(
+      '/users/groups',
+      'groups',
+      iteratee,
+      { login, ...params },
     );
   }
 
@@ -109,13 +139,15 @@ export class SonarqubeClient {
     endpoint: string,
     iterableObjectKey: T,
     iteratee: ResourceIteratee<U>,
+    params?: NodeJS.Dict<string | string[]>,
   ): Promise<void> {
     let page = 1;
 
     do {
       const searchParams = new URLSearchParams({
-        page: String(page),
-        per_page: String(ITEMS_PER_PAGE),
+        p: String(page),
+        ps: String(ITEMS_PER_PAGE),
+        ...params,
       });
 
       const parametizedEndpoint = `${endpoint}?${searchParams.toString()}`;
@@ -134,9 +166,9 @@ export class SonarqubeClient {
       }
 
       if (result[iterableObjectKey].length) {
-        page = 0; // stop pagination, we've reached the end of the line
-      } else {
         page += 1;
+      } else {
+        page = 0; // stop pagination, we've reached the end of the line
       }
     } while (page);
   }

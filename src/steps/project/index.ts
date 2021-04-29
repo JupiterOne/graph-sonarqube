@@ -7,7 +7,6 @@ import {
 import { Entities, Steps } from '../constants';
 import { createProjectEntity } from './converter';
 import { createSonarqubeClient } from '../../provider';
-import { SonarqubeProject } from '../../provider/types';
 import { SonarqubeIntegrationConfig } from '../../types';
 
 export async function fetchProjects({
@@ -15,21 +14,12 @@ export async function fetchProjects({
   jobState,
 }: IntegrationStepExecutionContext<SonarqubeIntegrationConfig>) {
   const client = createSonarqubeClient(instance.config);
-  const projectKeys = new Set<string>();
-  const addProjectEntity = async (
-    project: SonarqubeProject,
-  ): Promise<Entity> => {
-    const projectEntity = createProjectEntity(project);
-    if (!projectKeys.has(projectEntity._key)) {
-      await jobState.addEntity(projectEntity);
-      projectKeys.add(projectEntity._key);
-    }
-    return projectEntity;
-  };
 
-  await client.iterateProjects(async (project) => {
-    await addProjectEntity(project);
+  const convertedProjects: Entity[] = [];
+  await client.iterateProjects((project) => {
+    convertedProjects.push(createProjectEntity(project));
   });
+  await jobState.addEntities(convertedProjects);
 }
 
 export const projectSteps: IntegrationStep<SonarqubeIntegrationConfig>[] = [
