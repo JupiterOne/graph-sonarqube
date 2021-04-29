@@ -242,3 +242,52 @@ describe('#iterateUsers', () => {
     );
   });
 });
+
+describe('#iterateUsersGroups', () => {
+  let recording: Recording;
+
+  afterEach(async () => {
+    await recording.stop();
+  });
+
+  test('should fetch users user groups with valid config', async () => {
+    recording = setupRecording({
+      directory: __dirname,
+      name: 'iterateUsersGroupsShouldFetchUserGroupsWithValidConfig',
+      options: {
+        matchRequestsBy: {
+          url: {
+            hostname: false,
+          },
+        },
+        recordFailedRequests: true,
+      },
+      mutateEntry: mutations.unzipGzippedRecordingEntry,
+    });
+
+    const context = createMockStepExecutionContext({
+      instanceConfig: {
+        baseUrl: process.env.BASE_URL || 'http://localhost:9000',
+        apiToken: process.env.API_TOKEN || 'string-value',
+      },
+    });
+    const provider = createSonarqubeClient(context.instance.config);
+
+    const results: SonarqubeUserGroup[] = [];
+    await provider.iterateUsersGroups((userGroup) => {
+      results.push(userGroup);
+    }, 'testUser');
+
+    expect(results).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: expect.any(String),
+          name: expect.any(String),
+          description: expect.any(String),
+          selected: expect.any(Boolean),
+          default: expect.any(Boolean),
+        }),
+      ]),
+    );
+  });
+});

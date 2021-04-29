@@ -86,7 +86,16 @@ The following entities are created:
 | Resources | Entity `_type`         | Entity `_class` |
 | --------- | ---------------------- | --------------- |
 | Project   | `sonarqube_project`    | `Project`       |
+| User      | `sonarqube_user`       | `User`          |
 | UserGroup | `sonarqube_user_group` | `UserGroup`     |
+
+### Relationships
+
+The following relationships are created/mapped:
+
+| Source Entity `_type`  | Relationship `_class` | Target Entity `_type` |
+| ---------------------- | --------------------- | --------------------- |
+| `sonarqube_user_group` | **HAS**               | `sonarqube_user`      |
 
 <!--
 ********************************************************************************

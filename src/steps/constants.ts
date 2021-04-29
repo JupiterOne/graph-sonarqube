@@ -4,6 +4,7 @@ export const Steps = {
   PROJECTS: 'fetch-projects',
   USER_GROUPS: 'fetch-user-groups',
   USERS: 'fetch-users',
+  BUILD_USER_GROUP_HAS_USER: 'build-user-group-has-user',
 };
 
 export const Entities = {

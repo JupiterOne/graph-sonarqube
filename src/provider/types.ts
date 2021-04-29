@@ -11,7 +11,8 @@ export interface SonarqubeUserGroup {
   id: string; // This value is unique but is NOT what ties relationships to users
   name: string; // This value is unique and is what ties relationships to users
   description: string;
-  membersCount: number;
+  membersCount?: number;
+  selected?: string;
   default: boolean;
 }
 

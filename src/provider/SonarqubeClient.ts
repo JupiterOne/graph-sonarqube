@@ -77,6 +77,19 @@ export class SonarqubeClient {
     );
   }
 
+  async iterateUsersGroups(
+    iteratee: ResourceIteratee<SonarqubeUserGroup>,
+    login: string,
+    params?: NodeJS.Dict<string | string[]>,
+  ): Promise<void> {
+    return this.iterateResources<'groups', SonarqubeUserGroup>(
+      '/users/groups',
+      'groups',
+      iteratee,
+      { login, ...params },
+    );
+  }
+
   async fetchAuthenticationValidate(): Promise<ValidationResponse> {
     return this.makeSingularRequest('/authentication/validate') as Promise<
       ValidationResponse
