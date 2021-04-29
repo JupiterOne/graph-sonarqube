@@ -33,7 +33,7 @@ describe('#fetchProjects', () => {
     });
     await fetchProjects(context);
 
-    expect(context.jobState.collectedEntities).toHaveLength(1);
+    expect(context.jobState.collectedEntities).toHaveLength(2);
     expect(context.jobState.collectedRelationships).toHaveLength(0);
     expect(context.jobState.collectedEntities).toEqual([
       expect.objectContaining({
@@ -46,6 +46,15 @@ describe('#fetchProjects', () => {
         revision: expect.any(String),
         visibility: expect.any(String),
         lastAnalysisDate: expect.any(String),
+      }),
+      expect.objectContaining({
+        _key: expect.any(String),
+        _class: ['Project'],
+        _type: 'sonarqube_project',
+        key: expect.any(String),
+        name: expect.any(String),
+        qualifier: expect.any(String),
+        visibility: expect.any(String),
       }),
     ]);
   });

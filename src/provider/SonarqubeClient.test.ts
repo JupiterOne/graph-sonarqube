@@ -9,7 +9,7 @@ import {
 import { createSonarqubeClient } from '.';
 import { SonarqubeProject, SonarqubeUserGroup, SonarqubeUser } from './types';
 
-describe('#SonarqubeClient', () => {
+describe('#iterateResources', () => {
   let recording: Recording;
 
   afterEach(async () => {
@@ -19,7 +19,7 @@ describe('#SonarqubeClient', () => {
   test('should fail with invalid token', async () => {
     recording = setupRecording({
       directory: __dirname,
-      name: 'SonarqubeClientShouldFailWithInvalidToken',
+      name: 'iterateResourcesShouldFailWithInvalidToken',
       options: {
         matchRequestsBy: {
           url: {
@@ -43,6 +43,38 @@ describe('#SonarqubeClient', () => {
         // do nothing
       }),
     ).rejects.toThrowError(IntegrationProviderAuthenticationError);
+  });
+
+  test('should paginate correctly', async () => {
+    recording = setupRecording({
+      directory: __dirname,
+      name: 'iterateResourcesShouldPaginateCorrectly',
+      options: {
+        matchRequestsBy: {
+          url: {
+            hostname: false,
+          },
+        },
+        recordFailedRequests: true,
+      },
+      mutateEntry: mutations.unzipGzippedRecordingEntry,
+    });
+
+    const context = createMockStepExecutionContext({
+      instanceConfig: {
+        baseUrl: process.env.BASE_URL || 'http://localhost:9000',
+        apiToken: process.env.API_TOKEN || 'string-value',
+      },
+    });
+    const provider = createSonarqubeClient(context.instance.config);
+    const results: SonarqubeProject[] = [];
+    await provider.iterateProjects(
+      (project) => {
+        results.push(project);
+      },
+      { ps: '1' },
+    );
+    expect(results).toHaveLength(2);
   });
 });
 
@@ -150,35 +182,6 @@ describe('#iterateUsers', () => {
 
   afterEach(async () => {
     await recording.stop();
-  });
-
-  test('should fail with invalid token', async () => {
-    recording = setupRecording({
-      directory: __dirname,
-      name: 'iterateUsersShouldFailWithInvalidToken',
-      options: {
-        matchRequestsBy: {
-          url: {
-            hostname: false,
-          },
-        },
-        recordFailedRequests: true,
-      },
-      mutateEntry: mutations.unzipGzippedRecordingEntry,
-    });
-
-    const context = createMockStepExecutionContext({
-      instanceConfig: {
-        baseUrl: 'http://localhost:9000',
-        apiToken: 'string-value',
-      },
-    });
-    const provider = createSonarqubeClient(context.instance.config);
-    await expect(
-      provider.iterateUsers(() => {
-        // do nothing
-      }),
-    ).rejects.toThrowError(IntegrationProviderAuthenticationError);
   });
 
   test('should fetch users with valid config', async () => {
