@@ -15,7 +15,7 @@ describe('#createUserGroupEntity', () => {
 
     expect(entity).toEqual(
       expect.objectContaining({
-        _key: 'user-group-name-1',
+        _key: 'user-group-id-1',
         _type: 'sonarqube_user_group',
         _class: ['UserGroup'],
         id: 'user-group-id-1',

@@ -11,7 +11,7 @@ export function createUserGroupEntity(userGroup: SonarqubeUserGroup): Entity {
     entityData: {
       source: userGroup,
       assign: {
-        _key: userGroup.name,
+        _key: userGroup.id,
         _type: Entities.USER_GROUP._type,
         _class: Entities.USER_GROUP._class,
         id: userGroup.id,

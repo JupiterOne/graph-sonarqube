@@ -9,7 +9,7 @@ import {
 import { createSonarqubeClient } from '.';
 import { SonarqubeProject, SonarqubeUserGroup } from './types';
 
-describe('#iterateProjects', () => {
+describe('#SonarqubeClient', () => {
   let recording: Recording;
 
   afterEach(async () => {
@@ -19,7 +19,7 @@ describe('#iterateProjects', () => {
   test('should fail with invalid token', async () => {
     recording = setupRecording({
       directory: __dirname,
-      name: 'iterateProjectsShouldFailWithInvalidToken',
+      name: 'SonarqubeClientShouldFailWithInvalidToken',
       options: {
         matchRequestsBy: {
           url: {
@@ -43,6 +43,14 @@ describe('#iterateProjects', () => {
         // do nothing
       }),
     ).rejects.toThrowError(IntegrationProviderAuthenticationError);
+  });
+});
+
+describe('#iterateProjects', () => {
+  let recording: Recording;
+
+  afterEach(async () => {
+    await recording.stop();
   });
 
   test('should fetch projects with valid config', async () => {
@@ -93,35 +101,6 @@ describe('#iterateUserGroups', () => {
 
   afterEach(async () => {
     await recording.stop();
-  });
-
-  test('should fail with invalid token', async () => {
-    recording = setupRecording({
-      directory: __dirname,
-      name: 'iterateUserGroupsShouldFailWithInvalidToken',
-      options: {
-        matchRequestsBy: {
-          url: {
-            hostname: false,
-          },
-        },
-        recordFailedRequests: true,
-      },
-      mutateEntry: mutations.unzipGzippedRecordingEntry,
-    });
-
-    const context = createMockStepExecutionContext({
-      instanceConfig: {
-        baseUrl: 'http://localhost:9000',
-        apiToken: 'string-value',
-      },
-    });
-    const provider = createSonarqubeClient(context.instance.config);
-    await expect(
-      provider.iterateUserGroups(() => {
-        // do nothing
-      }),
-    ).rejects.toThrowError(IntegrationProviderAuthenticationError);
   });
 
   test('should fetch user groups with valid config', async () => {
