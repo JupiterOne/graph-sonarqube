@@ -8,6 +8,26 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Updated SDK versions to v8
+
+- Entities:
+
+  | Resources | Entity `_type`      | Entity `_class` |
+  | --------- | ------------------- | --------------- |
+  | Account   | `sonarqube_account` | `Account`       |
+  | Finding   | `sonarqube_finding` | `Finding`       |
+
+- Relationships:
+
+  | Source Entity `_type` | Relationship `_class` | Target Entity `_type`  |
+  | --------------------- | --------------------- | ---------------------- |
+  | `sonarqube_account`   | **HAS**               | `sonarqube_project`    |
+  | `sonarqube_account`   | **HAS**               | `sonarqube_user`       |
+  | `sonarqube_account`   | **HAS**               | `sonarqube_user_group` |
+  | `sonarqube_project`   | **HAS**               | `sonarqube_finding`    |
+
 ## 0.1.0 2021-04-29
 
 ### Added

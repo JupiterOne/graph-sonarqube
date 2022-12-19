@@ -85,6 +85,8 @@ The following entities are created:
 
 | Resources | Entity `_type`         | Entity `_class` |
 | --------- | ---------------------- | --------------- |
+| Account   | `sonarqube_account`    | `Account`       |
+| Finding   | `sonarqube_finding`    | `Finding`       |
 | Project   | `sonarqube_project`    | `Project`       |
 | User      | `sonarqube_user`       | `User`          |
 | UserGroup | `sonarqube_user_group` | `UserGroup`     |
@@ -93,9 +95,13 @@ The following entities are created:
 
 The following relationships are created:
 
-| Source Entity `_type`  | Relationship `_class` | Target Entity `_type` |
-| ---------------------- | --------------------- | --------------------- |
-| `sonarqube_user_group` | **HAS**               | `sonarqube_user`      |
+| Source Entity `_type`  | Relationship `_class` | Target Entity `_type`  |
+| ---------------------- | --------------------- | ---------------------- |
+| `sonarqube_account`    | **HAS**               | `sonarqube_project`    |
+| `sonarqube_account`    | **HAS**               | `sonarqube_user`       |
+| `sonarqube_account`    | **HAS**               | `sonarqube_user_group` |
+| `sonarqube_project`    | **HAS**               | `sonarqube_finding`    |
+| `sonarqube_user_group` | **HAS**               | `sonarqube_user`       |
 
 <!--
 ********************************************************************************
