@@ -14,7 +14,6 @@ export function createAccountEntity(
   return createIntegrationEntity({
     entityData: {
       source: {
-        id,
         name,
       },
       assign: {
