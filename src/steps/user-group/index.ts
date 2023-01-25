@@ -1,10 +1,17 @@
 import {
+  createDirectRelationship,
   Entity,
   IntegrationStep,
   IntegrationStepExecutionContext,
+  RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
-import { Entities, Steps } from '../constants';
+import {
+  ACCOUNT_ENTITY_KEY,
+  Entities,
+  Relationships,
+  Steps,
+} from '../constants';
 import { createUserGroupEntity } from './converter';
 import { createSonarqubeClient } from '../../provider';
 import { SonarqubeIntegrationConfig } from '../../types';
@@ -13,13 +20,22 @@ export async function fetchUserGroups({
   instance,
   jobState,
 }: IntegrationStepExecutionContext<SonarqubeIntegrationConfig>) {
+  const accountEntity = (await jobState.getData(ACCOUNT_ENTITY_KEY)) as Entity;
   const client = createSonarqubeClient(instance.config);
 
-  const convertedUserGroups: Entity[] = [];
-  await client.iterateUserGroups((userGroup) => {
-    convertedUserGroups.push(createUserGroupEntity(userGroup));
+  await client.iterateUserGroups(async (userGroup) => {
+    const userGroupEntity = await jobState.addEntity(
+      createUserGroupEntity(userGroup),
+    );
+
+    await jobState.addRelationship(
+      createDirectRelationship({
+        _class: RelationshipClass.HAS,
+        from: accountEntity,
+        to: userGroupEntity,
+      }),
+    );
   });
-  await jobState.addEntities(convertedUserGroups);
 }
 
 export const userGroupSteps: IntegrationStep<SonarqubeIntegrationConfig>[] = [
@@ -28,6 +44,7 @@ export const userGroupSteps: IntegrationStep<SonarqubeIntegrationConfig>[] = [
     name: 'User Groups',
     entities: [Entities.USER_GROUP],
     executionHandler: fetchUserGroups,
-    relationships: [],
+    relationships: [Relationships.ACCOUNT_HAS_USER_GROUP],
+    dependsOn: [Steps.ACCOUNT],
   },
 ];

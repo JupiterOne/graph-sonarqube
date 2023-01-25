@@ -29,6 +29,33 @@ export interface SonarqubeUser {
   avatar: string;
 }
 
+export interface SonarqubeFinding {
+  key: string;
+  rule: string;
+  severity: string;
+  component: string;
+  project: string;
+  line: number;
+  hash: string;
+  textRange: {
+    startLine: number;
+    endLine: number;
+    startOffset: number;
+    endOffset: number;
+  };
+  status: string;
+  message: string;
+  effort: string;
+  debt: string;
+  author: string;
+  tags: string[];
+  creationDate: string;
+  updateDate: string;
+  type: string;
+  scope: string;
+  quickFixAvailable: boolean;
+}
+
 export interface Pagination {
   pageIndex: number;
   pageSize: number;

@@ -14,6 +14,7 @@ import {
   ValidationResponse,
   SonarqubeUserGroup,
   SonarqubeUser,
+  SonarqubeFinding,
 } from './types';
 
 /**
@@ -72,6 +73,18 @@ export class SonarqubeClient {
     return this.iterateResources<'users', SonarqubeUser>(
       '/users/search',
       'users',
+      iteratee,
+      params,
+    );
+  }
+
+  async iterateProjectFindings(
+    iteratee: ResourceIteratee<SonarqubeFinding>,
+    params?: NodeJS.Dict<string | string[]>,
+  ): Promise<void> {
+    return this.iterateResources<'issues', SonarqubeFinding>(
+      '/issues/search',
+      'issues',
       iteratee,
       params,
     );

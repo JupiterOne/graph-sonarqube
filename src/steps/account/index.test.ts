@@ -3,10 +3,9 @@ import {
   Recording,
   setupRecording,
 } from '@jupiterone/integration-sdk-testing';
-import { fetchProjects } from '.';
-import { fetchAccount } from '../account';
+import { fetchAccount } from '.';
 
-describe('#fetchProjects', () => {
+describe('#fetchAccount', () => {
   let recording: Recording;
 
   afterEach(async () => {
@@ -32,36 +31,20 @@ describe('#fetchProjects', () => {
         apiToken: process.env.API_TOKEN || 'string-value',
       },
     });
-
     await fetchAccount(context);
-    await fetchProjects(context);
 
-    expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
-    expect(context.jobState.collectedRelationships.length).toBeGreaterThan(0);
-
-    const projectEntities = context.jobState.collectedEntities.filter(
-      (p) => p._type === 'sonarqube_project',
-    );
-
-    expect(projectEntities).toMatchGraphObjectSchema({
-      _class: ['Project'],
+    expect(context.jobState.collectedEntities).toHaveLength(1);
+    expect(context.jobState.collectedRelationships).toHaveLength(0);
+    expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
+      _class: ['Account'],
       schema: {
         additionalProperties: true,
         properties: {
-          _type: { const: 'sonarqube_project' },
+          _type: { const: 'sonarqube_account' },
           _key: { type: 'string' },
-          key: { type: 'string' },
           name: { type: 'string' },
-          qualifier: { type: 'string' },
-          revision: { type: 'string' },
-          visibility: { type: 'string' },
-          lastAnalysisDate: { type: 'string' },
-          _rawData: {
-            type: 'array',
-            items: { type: 'object' },
-          },
+          id: { type: 'string' },
         },
-        required: ['name'],
       },
     });
   });

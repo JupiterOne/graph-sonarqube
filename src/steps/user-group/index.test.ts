@@ -4,6 +4,7 @@ import {
   setupRecording,
 } from '@jupiterone/integration-sdk-testing';
 import { fetchUserGroups } from '.';
+import { fetchAccount } from '../account';
 
 describe('#fetchUserGroups', () => {
   let recording: Recording;
@@ -31,11 +32,18 @@ describe('#fetchUserGroups', () => {
         apiToken: process.env.API_TOKEN || 'string-value',
       },
     });
+
+    await fetchAccount(context);
     await fetchUserGroups(context);
 
-    expect(context.jobState.collectedEntities).toHaveLength(2);
-    expect(context.jobState.collectedRelationships).toHaveLength(0);
-    expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
+    expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
+    expect(context.jobState.collectedRelationships.length).toBeGreaterThan(0);
+
+    const userGroupEntities = context.jobState.collectedEntities.filter(
+      (p) => p._type === 'sonarqube_user_group',
+    );
+
+    expect(userGroupEntities).toMatchGraphObjectSchema({
       _class: ['UserGroup'],
       schema: {
         additionalProperties: true,

@@ -7,6 +7,7 @@ import {
 import { buildUserGroupUserRelationships, fetchUsers } from '.';
 import { fetchUserGroups } from '../user-group';
 import { Relationships } from '../constants';
+import { fetchAccount } from '../account';
 
 describe('#fetchUsers', () => {
   let recording: Recording;
@@ -34,11 +35,18 @@ describe('#fetchUsers', () => {
         apiToken: process.env.API_TOKEN || 'string-value',
       },
     });
+
+    await fetchAccount(context);
     await fetchUsers(context);
 
-    expect(context.jobState.collectedEntities).toHaveLength(2);
-    expect(context.jobState.collectedRelationships).toHaveLength(0);
-    expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
+    expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
+    expect(context.jobState.collectedRelationships.length).toBeGreaterThan(0);
+
+    const userEntities = context.jobState.collectedEntities.filter(
+      (p) => p._type === 'sonarqube_user',
+    );
+
+    expect(userEntities).toMatchGraphObjectSchema({
       _class: ['User'],
       schema: {
         additionalProperties: true,
@@ -90,16 +98,18 @@ describe('#buildUserGroupUserRelationships', () => {
         apiToken: process.env.API_TOKEN || 'string-value',
       },
     });
+
+    await fetchAccount(context);
     await fetchUsers(context);
     await fetchUserGroups(context);
     await buildUserGroupUserRelationships(context);
 
-    expect(context.jobState.collectedRelationships).toHaveLength(3);
-    expect(
-      context.jobState.collectedRelationships.filter(
-        (r) => r._type === Relationships.GROUP_HAS_USER._type,
-      ),
-    ).toMatchDirectRelationshipSchema({
+    const userUserGroupRelationships = context.jobState.collectedRelationships.filter(
+      (r) => r._type === Relationships.GROUP_HAS_USER._type,
+    );
+
+    expect(userUserGroupRelationships.length).toBeGreaterThan(0);
+    expect(userUserGroupRelationships).toMatchDirectRelationshipSchema({
       schema: {
         properties: {
           _class: { const: RelationshipClass.HAS },

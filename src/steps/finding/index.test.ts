@@ -3,10 +3,11 @@ import {
   Recording,
   setupRecording,
 } from '@jupiterone/integration-sdk-testing';
-import { fetchProjects } from '.';
+import { fetchFindings } from '.';
 import { fetchAccount } from '../account';
+import { fetchProjects } from '../project';
 
-describe('#fetchProjects', () => {
+describe('#fetchFindings', () => {
   let recording: Recording;
 
   afterEach(async () => {
@@ -16,7 +17,7 @@ describe('#fetchProjects', () => {
   test('should collect data', async () => {
     recording = setupRecording({
       directory: __dirname,
-      name: 'fetchProjectsShouldCollectData',
+      name: 'fetchFindingsShouldCollectData',
       options: {
         matchRequestsBy: {
           url: {
@@ -35,34 +36,33 @@ describe('#fetchProjects', () => {
 
     await fetchAccount(context);
     await fetchProjects(context);
+    await fetchFindings(context);
 
-    expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
-    expect(context.jobState.collectedRelationships.length).toBeGreaterThan(0);
-
-    const projectEntities = context.jobState.collectedEntities.filter(
-      (p) => p._type === 'sonarqube_project',
+    const entities = context.jobState.collectedEntities.filter(
+      (p) => p._type === 'sonarqube_finding',
+    );
+    const relationships = context.jobState.collectedRelationships.filter(
+      (r) => r._type === 'sonarqube_project_has_finding',
     );
 
-    expect(projectEntities).toMatchGraphObjectSchema({
-      _class: ['Project'],
+    expect(entities).toMatchGraphObjectSchema({
+      _class: ['Finding'],
       schema: {
         additionalProperties: true,
         properties: {
-          _type: { const: 'sonarqube_project' },
+          _type: { const: 'sonarqube_finding' },
           _key: { type: 'string' },
           key: { type: 'string' },
           name: { type: 'string' },
-          qualifier: { type: 'string' },
-          revision: { type: 'string' },
-          visibility: { type: 'string' },
-          lastAnalysisDate: { type: 'string' },
           _rawData: {
             type: 'array',
             items: { type: 'object' },
           },
         },
-        required: ['name'],
       },
     });
+
+    expect(entities.length).toBeGreaterThan(0);
+    expect(relationships.length).toBeGreaterThan(0);
   });
 });
