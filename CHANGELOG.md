@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 1.0.0 2023-01-26
+
 ### Added
 
 - Updated SDK versions to v8
