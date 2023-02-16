@@ -41,7 +41,7 @@ export async function fetchUserGroups({
 export const userGroupSteps: IntegrationStep<SonarqubeIntegrationConfig>[] = [
   {
     id: Steps.USER_GROUPS,
-    name: 'User Groups',
+    name: 'Fetch User Groups',
     entities: [Entities.USER_GROUP],
     executionHandler: fetchUserGroups,
     relationships: [Relationships.ACCOUNT_HAS_USER_GROUP],

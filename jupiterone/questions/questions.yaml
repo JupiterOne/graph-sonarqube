@@ -1,0 +1,5 @@
+---
+sourceId: managed:sonarqube
+integrationDefinitionId: '${integration_definition_id}'
+questions:
+  []

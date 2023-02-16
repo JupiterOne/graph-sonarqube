@@ -45,7 +45,7 @@ export async function fetchProjects({
 export const projectSteps: IntegrationStep<SonarqubeIntegrationConfig>[] = [
   {
     id: Steps.PROJECTS,
-    name: 'Projects',
+    name: 'Fetch Projects',
     entities: [Entities.PROJECT],
     executionHandler: fetchProjects,
     relationships: [Relationships.ACCOUNT_HAS_PROJECT],

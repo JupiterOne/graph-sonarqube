@@ -92,7 +92,7 @@ export async function buildUserGroupUserRelationships({
 export const userSteps: IntegrationStep<SonarqubeIntegrationConfig>[] = [
   {
     id: Steps.USERS,
-    name: 'Users',
+    name: 'Fetch Users',
     entities: [Entities.USER],
     executionHandler: fetchUsers,
     relationships: [Relationships.ACCOUNT_HAS_USER],

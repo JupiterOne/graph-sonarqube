@@ -5,8 +5,9 @@ import { integrationSteps } from './steps';
 import { SonarqubeIntegrationConfig } from './types';
 import validateInvocation from './validateInvocation';
 
-export const invocationConfig: IntegrationInvocationConfig<SonarqubeIntegrationConfig> = {
-  instanceConfigFields,
-  validateInvocation,
-  integrationSteps,
-};
+export const invocationConfig: IntegrationInvocationConfig<SonarqubeIntegrationConfig> =
+  {
+    instanceConfigFields,
+    validateInvocation,
+    integrationSteps,
+  };

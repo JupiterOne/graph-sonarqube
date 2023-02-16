@@ -1,6 +1,7 @@
 import {
   createIntegrationEntity,
   Entity,
+  parseTimePropertyValue,
 } from '@jupiterone/integration-sdk-core';
 
 import { Entities } from '../constants';
@@ -23,7 +24,7 @@ export function createProjectEntity(project: SonarqubeProject): Entity {
         name: project.name,
         qualifier: project.qualifier,
         visibility: project.visibility,
-        lastAnalysisDate: project.lastAnalysisDate,
+        lastAnalysisOn: parseTimePropertyValue(project.lastAnalysisDate),
         revision: project.revision,
       },
     },
