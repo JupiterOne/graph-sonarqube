@@ -23,7 +23,7 @@ describe('#createProjectEntity', () => {
         name: 'Project Name 1',
         qualifier: 'TRK',
         visibility: 'public',
-        lastAnalysisOn: 1488357543000,
+        lastAnalysisDate: 1488357543000,
         revision: 'cfb82f55c6ef32e61828c4cb3db2da12795fd767',
         _rawData: [
           {

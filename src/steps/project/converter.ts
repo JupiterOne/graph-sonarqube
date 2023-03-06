@@ -24,7 +24,7 @@ export function createProjectEntity(project: SonarqubeProject): Entity {
         name: project.name,
         qualifier: project.qualifier,
         visibility: project.visibility,
-        lastAnalysisOn: parseTimePropertyValue(project.lastAnalysisDate),
+        lastAnalysisDate: parseTimePropertyValue(project.lastAnalysisDate),
         revision: project.revision,
       },
     },
