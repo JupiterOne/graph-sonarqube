@@ -23,10 +23,6 @@ import {
 const ITEMS_PER_PAGE = 100;
 
 export type ResourceIteratee<T> = (each: T) => Promise<void> | void;
-export type PageErrorHandler = ({
-  err: Error,
-  endpoint: string,
-}) => Promise<void> | void;
 
 export enum HttpMethod {
   GET = 'get',
@@ -104,9 +100,9 @@ export class SonarqubeClient {
   }
 
   async fetchAuthenticationValidate(): Promise<ValidationResponse> {
-    return this.makeSingularRequest('/authentication/validate') as Promise<
-      ValidationResponse
-    >;
+    return this.makeSingularRequest(
+      '/authentication/validate',
+    ) as Promise<ValidationResponse>;
   }
 
   private async makeRequest(endpoint: string): Promise<Response> {

@@ -1,51 +1,24 @@
 import {
-  createMockStepExecutionContext,
+  executeStepWithDependencies,
   Recording,
-  setupRecording,
 } from '@jupiterone/integration-sdk-testing';
-import { fetchAccount } from '.';
+import { buildStepTestConfigForStep } from '../../../test/config';
+import { setupProjectRecording } from '../../../test/recording';
 
-describe('#fetchAccount', () => {
-  let recording: Recording;
-
-  afterEach(async () => {
-    await recording.stop();
+let recording: Recording;
+beforeEach(() => {
+  recording = setupProjectRecording({
+    directory: __dirname,
+    name: 'fetch-account',
   });
+});
 
-  test('should collect data', async () => {
-    recording = setupRecording({
-      directory: __dirname,
-      name: 'fetchProjectsShouldCollectData',
-      options: {
-        matchRequestsBy: {
-          url: {
-            hostname: false,
-          },
-        },
-      },
-    });
+afterEach(async () => {
+  await recording.stop();
+});
 
-    const context = createMockStepExecutionContext({
-      instanceConfig: {
-        baseUrl: process.env.BASE_URL || 'http://localhost:9000',
-        apiToken: process.env.API_TOKEN || 'string-value',
-      },
-    });
-    await fetchAccount(context);
-
-    expect(context.jobState.collectedEntities).toHaveLength(1);
-    expect(context.jobState.collectedRelationships).toHaveLength(0);
-    expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
-      _class: ['Account'],
-      schema: {
-        additionalProperties: true,
-        properties: {
-          _type: { const: 'sonarqube_account' },
-          _key: { type: 'string' },
-          name: { type: 'string' },
-          id: { type: 'string' },
-        },
-      },
-    });
-  });
+test('fetch-account', async () => {
+  const stepConfig = buildStepTestConfigForStep('fetch-account');
+  const stepResult = await executeStepWithDependencies(stepConfig);
+  expect(stepResult).toMatchStepMetadata(stepConfig);
 });

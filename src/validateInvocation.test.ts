@@ -30,11 +30,10 @@ describe('#validateInvocation', () => {
       },
     });
 
-    const executionContext = createMockExecutionContext<
-      SonarqubeIntegrationConfig
-    >({
-      instanceConfig: {} as SonarqubeIntegrationConfig,
-    });
+    const executionContext =
+      createMockExecutionContext<SonarqubeIntegrationConfig>({
+        instanceConfig: {} as SonarqubeIntegrationConfig,
+      });
 
     await expect(validateInvocation(executionContext)).rejects.toThrowError(
       IntegrationValidationError,
@@ -56,14 +55,13 @@ describe('#validateInvocation', () => {
       mutateEntry: mutations.unzipGzippedRecordingEntry,
     });
 
-    const executionContext = createMockExecutionContext<
-      SonarqubeIntegrationConfig
-    >({
-      instanceConfig: {
-        baseUrl: process.env.BASE_URL || 'http://localhost:9000',
-        apiToken: 'INVALID',
-      },
-    });
+    const executionContext =
+      createMockExecutionContext<SonarqubeIntegrationConfig>({
+        instanceConfig: {
+          baseUrl: process.env.BASE_URL || 'http://localhost:9000',
+          apiToken: 'INVALID',
+        },
+      });
 
     await expect(validateInvocation(executionContext)).rejects.toThrowError(
       IntegrationValidationError,
@@ -85,14 +83,13 @@ describe('#validateInvocation', () => {
       mutateEntry: mutations.unzipGzippedRecordingEntry,
     });
 
-    const executionContext = createMockExecutionContext<
-      SonarqubeIntegrationConfig
-    >({
-      instanceConfig: {
-        baseUrl: 'http://example.com',
-        apiToken: process.env.API_TOKEN || 'string-value',
-      },
-    });
+    const executionContext =
+      createMockExecutionContext<SonarqubeIntegrationConfig>({
+        instanceConfig: {
+          baseUrl: 'http://example.com',
+          apiToken: process.env.API_TOKEN || 'string-value',
+        },
+      });
 
     await expect(validateInvocation(executionContext)).rejects.toThrowError(
       IntegrationValidationError,
