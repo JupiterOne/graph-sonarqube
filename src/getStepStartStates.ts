@@ -5,9 +5,9 @@ import {
 } from '@jupiterone/integration-sdk-core';
 import { SonarqubeIntegrationConfig } from './types';
 
-export default async function getStepStartStates(
+export default function getStepStartStates(
   context: IntegrationExecutionContext<SonarqubeIntegrationConfig>,
-): Promise<StepStartStates> {
+): StepStartStates {
   return {
     ['fetch-account']: {
       disabled: false,
