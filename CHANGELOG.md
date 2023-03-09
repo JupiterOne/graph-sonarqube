@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 1.0.0-beta.2 2023-03-09
+
+## Fixed
+
+- Fix Finding converter
+
 ## 1.0.0-beta.1 2023-03-06
 
 ## Changed
@@ -23,19 +29,19 @@ and this project adheres to
 
 - Entities:
 
-  | Resources | Entity `_type`      | Entity `_class` |
-  | --------- | ------------------- | --------------- |
-  | Account   | `sonarqube_account` | `Account`       |
-  | Finding   | `sonarqube_finding` | `Finding`       |
+| Resources | Entity `_type`      | Entity `_class` |
+| --------- | ------------------- | --------------- |
+| Account   | `sonarqube_account` | `Account`       |
+| Finding   | `sonarqube_finding` | `Finding`       |
 
 - Relationships:
 
-  | Source Entity `_type` | Relationship `_class` | Target Entity `_type`  |
-  | --------------------- | --------------------- | ---------------------- |
-  | `sonarqube_account`   | **HAS**               | `sonarqube_project`    |
-  | `sonarqube_account`   | **HAS**               | `sonarqube_user`       |
-  | `sonarqube_account`   | **HAS**               | `sonarqube_user_group` |
-  | `sonarqube_project`   | **HAS**               | `sonarqube_finding`    |
+| Source Entity `_type` | Relationship `_class` | Target Entity `_type`  |
+| --------------------- | --------------------- | ---------------------- |
+| `sonarqube_account`   | **HAS**               | `sonarqube_project`    |
+| `sonarqube_account`   | **HAS**               | `sonarqube_user`       |
+| `sonarqube_account`   | **HAS**               | `sonarqube_user_group` |
+| `sonarqube_project`   | **HAS**               | `sonarqube_finding`    |
 
 ## 0.1.0 2021-04-29
 
