@@ -37,7 +37,7 @@ export interface SonarqubeFinding {
   project: string;
   line: number;
   hash: string;
-  textRange: {
+  textRange?: {
     startLine: number;
     endLine: number;
     startOffset: number;
