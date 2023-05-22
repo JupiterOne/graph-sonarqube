@@ -20,9 +20,10 @@ import { SonarqubeIntegrationConfig } from '../../types';
 export async function fetchProjects({
   instance,
   jobState,
+  logger,
 }: IntegrationStepExecutionContext<SonarqubeIntegrationConfig>) {
   const accountEntity = (await jobState.getData(ACCOUNT_ENTITY_KEY)) as Entity;
-  const client = createSonarqubeClient(instance.config);
+  const client = createSonarqubeClient(instance.config, logger);
 
   const convertedProjects: Entity[] = [];
   const relationships: Relationship[] = [];

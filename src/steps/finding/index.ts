@@ -17,7 +17,7 @@ export async function fetchFindings({
   jobState,
   logger,
 }: IntegrationStepExecutionContext<SonarqubeIntegrationConfig>) {
-  const client = createSonarqubeClient(instance.config);
+  const client = createSonarqubeClient(instance.config, logger);
 
   await jobState.iterateEntities(
     { _type: Entities.PROJECT._type },
