@@ -2,6 +2,7 @@ import {
   createMockStepExecutionContext,
   Recording,
   setupRecording,
+  mutations,
 } from '@jupiterone/integration-sdk-testing';
 import { fetchFindings } from '.';
 import { fetchAccount } from '../account';
@@ -24,6 +25,9 @@ describe('#fetchFindings', () => {
             hostname: false,
           },
         },
+      },
+      mutateEntry: (entry) => {
+        mutations.unzipGzippedRecordingEntry(entry);
       },
     });
 

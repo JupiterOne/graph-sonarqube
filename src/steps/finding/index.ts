@@ -12,6 +12,8 @@ import { SonarqubeIntegrationConfig } from '../../types';
 import { SonarqubeProject } from '../../provider/types';
 import { createFindingEntity } from './converter';
 
+const severityList = ['INFO', 'MINOR', 'MAJOR', 'CRITICAL', 'BLOCKER'];
+
 export async function fetchFindings({
   instance,
   jobState,
@@ -29,24 +31,29 @@ export async function fetchFindings({
         return;
       }
 
-      await client.iterateProjectFindings(
-        async (finding) => {
-          const findingEntity = createFindingEntity(finding);
+      // We need to further filter our API calls in order to minimize the chances
+      // we'll hit the 10,000 limit impose by the API.  We're currently filtering
+      // by project and severity.
+      for (const severity of severityList) {
+        await client.iterateProjectFindings(
+          async (finding) => {
+            const findingEntity = createFindingEntity(finding);
 
-          if (!(await jobState.hasKey(findingEntity._key))) {
-            await jobState.addEntity(findingEntity);
-          }
+            if (!(await jobState.hasKey(findingEntity._key))) {
+              await jobState.addEntity(findingEntity);
+            }
 
-          await jobState.addRelationship(
-            createDirectRelationship({
-              _class: RelationshipClass.HAS,
-              from: projectEntity,
-              to: findingEntity,
-            }),
-          );
-        },
-        { componentKeys: project.key },
-      );
+            await jobState.addRelationship(
+              createDirectRelationship({
+                _class: RelationshipClass.HAS,
+                from: projectEntity,
+                to: findingEntity,
+              }),
+            );
+          },
+          { componentKeys: project.key, severities: severity },
+        );
+      }
     },
   );
 }
