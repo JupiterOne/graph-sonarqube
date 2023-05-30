@@ -8,6 +8,13 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 1.0.0-beta.3 2023-05-30
+
+## Changed
+
+- 400 errors resulting from querying more than 10,000 entries have been reduced
+  and converted to warnings.
+
 ## 1.0.0-beta.2 2023-03-09
 
 ## Fixed
