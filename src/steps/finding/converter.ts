@@ -41,7 +41,7 @@ export function createFindingEntity(finding: SonarqubeFinding): Entity {
         _type: Entities.FINDING._type,
         _class: Entities.FINDING._class,
         key: finding.key,
-        name: finding.hash,
+        name: finding.hash || finding.key, // fall back to key when hash isn't present
         rule: finding.rule,
         severity: finding.severity?.toLowerCase(),
         component: finding.component,
