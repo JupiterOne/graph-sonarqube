@@ -8,6 +8,13 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 1.0.0-beta.4 2023-05-31
+
+## Changed
+
+- Added additional logging for warnings when the 10,000 entries limit is
+  reached.
+
 ## 1.0.0-beta.3 2023-05-30
 
 ## Changed

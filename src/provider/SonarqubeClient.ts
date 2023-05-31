@@ -164,12 +164,14 @@ export class SonarqubeClient {
       if (page * ITEMS_PER_PAGE > 10000) {
         // We have a hard limit of 10,000 items imposed by the current API
         this.logger.warn(
-          { page, endpoint },
+          { page, endpoint, params },
           `Unable to paginate through more than 10,000 total entries due to API limitations.  Not all data will be ingested.`,
         );
         this.logger.publishWarnEvent({
           name: IntegrationWarnEventName.IngestionLimitEncountered,
-          description: `Unable to paginate through more than 10,000 total entries due to API limitations.  Not all data will be ingested.`,
+          description: `Unable to paginate through more than 10,000 total entries due to API limitations.  Not all data will be ingested.  Endpoint: [${endpoint}]   Parameters: [${JSON.stringify(
+            params,
+          )}]`,
         });
         break;
       }
