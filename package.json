@@ -2,6 +2,10 @@
   "name": "@jupiterone/graph-sonarqube",
   "version": "1.0.0-beta.4",
   "description": "Sonarqube integration for JupiterOne",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JupiterOne/graph-sonarqube"
+  },
   "license": "MPL-2.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
