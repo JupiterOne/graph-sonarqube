@@ -30,7 +30,8 @@ export default async function validateInvocation({
         'Integration configration credentials marked invalid by Sonarqube',
       );
     }
-  } catch {
+  } catch (e) {
+    logger.info({ e }, 'Error while validating the instance configuration');
     throw new IntegrationValidationError(
       'Could not verify credentials against provided Sonarqube baseUrl',
     );
