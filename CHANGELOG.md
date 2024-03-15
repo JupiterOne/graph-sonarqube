@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 1.1.0 2024-03-15
+
+- Add Dockerfile and .github/workflows/package-publish.yml to support collectors
+
 ## 1.0.0-beta.4 2023-05-31
 
 ## Changed
