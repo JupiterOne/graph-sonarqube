@@ -8,6 +8,14 @@ import { SonarqubeIntegrationConfig } from './types';
 export default function getStepStartStates(
   context: IntegrationExecutionContext<SonarqubeIntegrationConfig>,
 ): StepStartStates {
+  context.logger.warn(
+    {
+      enableFindingsIngestion: !!context.instance.config
+        .enableFindingsIngestion,
+    },
+    'Findings ingestion flag',
+  );
+
   return {
     ['fetch-account']: {
       disabled: false,

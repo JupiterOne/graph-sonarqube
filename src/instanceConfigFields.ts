@@ -8,6 +8,11 @@ const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
     type: 'string',
     mask: true,
   },
+  enableFindingsIngestion: {
+    type: 'boolean',
+    mask: false,
+    optional: true,
+  },
 };
 
 export default instanceConfigFields;
