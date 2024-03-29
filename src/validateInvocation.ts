@@ -8,6 +8,7 @@ import { SonarqubeIntegrationConfig } from './types';
 
 export default async function validateInvocation({
   instance,
+  logger,
 }: IntegrationExecutionContext<SonarqubeIntegrationConfig>): Promise<void> {
   const config = instance.config;
 
@@ -21,7 +22,7 @@ export default async function validateInvocation({
     config.baseUrl = config.baseUrl.slice(0, -1);
   }
 
-  const client = createSonarqubeClient(instance.config);
+  const client = createSonarqubeClient(instance.config, logger);
   try {
     const resp = await client.fetchAuthenticationValidate();
     if (!resp.valid) {
@@ -29,7 +30,8 @@ export default async function validateInvocation({
         'Integration configration credentials marked invalid by Sonarqube',
       );
     }
-  } catch {
+  } catch (e) {
+    logger.info({ e }, 'Error while validating the instance configuration');
     throw new IntegrationValidationError(
       'Could not verify credentials against provided Sonarqube baseUrl',
     );

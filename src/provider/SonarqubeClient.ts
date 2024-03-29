@@ -3,9 +3,11 @@ import { URLSearchParams } from 'url';
 
 import {
   IntegrationError,
+  IntegrationLogger,
   IntegrationProviderAPIError,
   IntegrationProviderAuthenticationError,
   IntegrationProviderAuthorizationError,
+  IntegrationWarnEventName,
 } from '@jupiterone/integration-sdk-core';
 
 import {
@@ -36,10 +38,12 @@ export enum HttpMethod {
 export class SonarqubeClient {
   private readonly baseUrl: string;
   private readonly authorization: string;
+  private readonly logger: IntegrationLogger;
 
-  constructor(baseUrl: string, apiToken: string) {
+  constructor(baseUrl: string, apiToken: string, logger: IntegrationLogger) {
     this.baseUrl = baseUrl;
     this.authorization = Buffer.from(`${apiToken}:`).toString('base64');
+    this.logger = logger;
   }
 
   async iterateProjects(
@@ -157,6 +161,21 @@ export class SonarqubeClient {
     let page = 1;
 
     do {
+      if (page * ITEMS_PER_PAGE > 10000) {
+        // We have a hard limit of 10,000 items imposed by the current API
+        this.logger.warn(
+          { page, endpoint, params },
+          `Unable to paginate through more than 10,000 total entries due to API limitations.  Not all data will be ingested.`,
+        );
+        this.logger.publishWarnEvent({
+          name: IntegrationWarnEventName.IngestionLimitEncountered,
+          description: `Unable to paginate through more than 10,000 total entries due to API limitations.  Not all data will be ingested.  Endpoint: [${endpoint}]   Parameters: [${JSON.stringify(
+            params,
+          )}]`,
+        });
+        break;
+      }
+
       const searchParams = new URLSearchParams({
         p: String(page),
         ps: String(ITEMS_PER_PAGE),

@@ -15,6 +15,24 @@ and this project adheres to
 - Added enableFindingsIngestion to config Field map to allow its use by
   Collectors.
 
+## 1.1.0 2024-03-15
+
+- Add Dockerfile and .github/workflows/package-publish.yml to support collectors
+
+## 1.0.0-beta.4 2023-05-31
+
+## Changed
+
+- Added additional logging for warnings when the 10,000 entries limit is
+  reached.
+
+## 1.0.0-beta.3 2023-05-30
+
+## Changed
+
+- 400 errors resulting from querying more than 10,000 entries have been reduced
+  and converted to warnings.
+
 ## 1.0.0-beta.2 2023-03-09
 
 ## Fixed

@@ -33,8 +33,9 @@ export function createUserGroupUserRelationship(
 export async function fetchUsers({
   instance,
   jobState,
+  logger,
 }: IntegrationStepExecutionContext<SonarqubeIntegrationConfig>) {
-  const client = createSonarqubeClient(instance.config);
+  const client = createSonarqubeClient(instance.config, logger);
   const accountEntity = (await jobState.getData(ACCOUNT_ENTITY_KEY)) as Entity;
 
   const convertedUsers: Entity[] = [];
@@ -57,8 +58,9 @@ export async function fetchUsers({
 export async function buildUserGroupUserRelationships({
   instance,
   jobState,
+  logger,
 }: IntegrationStepExecutionContext<SonarqubeIntegrationConfig>) {
-  const client = createSonarqubeClient(instance.config);
+  const client = createSonarqubeClient(instance.config, logger);
   await jobState.iterateEntities(
     { _type: Entities.USER._type },
     async (userEntity) => {

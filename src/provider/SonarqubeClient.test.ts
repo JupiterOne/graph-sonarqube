@@ -37,7 +37,10 @@ describe('#iterateResources', () => {
         apiToken: 'string-value',
       },
     });
-    const provider = createSonarqubeClient(context.instance.config);
+    const provider = createSonarqubeClient(
+      context.instance.config,
+      context.logger,
+    );
     await expect(
       provider.iterateProjects(() => {
         // do nothing
@@ -66,7 +69,10 @@ describe('#iterateResources', () => {
         apiToken: process.env.API_TOKEN || 'string-value',
       },
     });
-    const provider = createSonarqubeClient(context.instance.config);
+    const provider = createSonarqubeClient(
+      context.instance.config,
+      context.logger,
+    );
     const results: SonarqubeProject[] = [];
     await provider.iterateProjects(
       (project) => {
@@ -106,7 +112,10 @@ describe('#iterateProjects', () => {
         apiToken: process.env.API_TOKEN || 'string-value',
       },
     });
-    const provider = createSonarqubeClient(context.instance.config);
+    const provider = createSonarqubeClient(
+      context.instance.config,
+      context.logger,
+    );
 
     const results: SonarqubeProject[] = [];
     await provider.iterateProjects((project) => {
@@ -156,7 +165,10 @@ describe('#iterateUserGroups', () => {
         apiToken: process.env.API_TOKEN || 'string-value',
       },
     });
-    const provider = createSonarqubeClient(context.instance.config);
+    const provider = createSonarqubeClient(
+      context.instance.config,
+      context.logger,
+    );
 
     const results: SonarqubeUserGroup[] = [];
     await provider.iterateUserGroups((userGroup) => {
@@ -205,7 +217,10 @@ describe('#iterateUsers', () => {
         apiToken: process.env.API_TOKEN || 'string-value',
       },
     });
-    const provider = createSonarqubeClient(context.instance.config);
+    const provider = createSonarqubeClient(
+      context.instance.config,
+      context.logger,
+    );
 
     const results: SonarqubeUser[] = [];
     await provider.iterateUsers((user) => {
@@ -271,7 +286,10 @@ describe('#iterateGroupsAssignedToUser', () => {
         apiToken: process.env.API_TOKEN || 'string-value',
       },
     });
-    const provider = createSonarqubeClient(context.instance.config);
+    const provider = createSonarqubeClient(
+      context.instance.config,
+      context.logger,
+    );
 
     const results: SonarqubeUserGroup[] = [];
     await provider.iterateGroupsAssignedToUser('testUser', (userGroup) => {
