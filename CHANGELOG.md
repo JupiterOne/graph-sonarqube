@@ -8,6 +8,13 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 1.0.0 2024-03-29
+
+## Changed
+
+- Added enableFindingsIngestion to config Field map to allow its use by
+  Collectors.
+
 ## 1.0.0-beta.2 2023-03-09
 
 ## Fixed
