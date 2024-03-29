@@ -8,6 +8,13 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 1.2.0 2024-03-29
+
+## Changed
+
+- Added enableFindingsIngestion to config Field map to allow its use by
+  Collectors.
+
 ## 1.1.0 2024-03-15
 
 - Add Dockerfile and .github/workflows/package-publish.yml to support collectors
