@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 2.0.0 2024-04-12
+
+## Changed
+
+- Enable support for Web API V2 for users and groups ingestion.
+
 ## 1.2.0 2024-03-29
 
 ## Changed
