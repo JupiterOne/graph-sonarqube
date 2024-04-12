@@ -4,7 +4,7 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import { Entities } from '../constants';
-import { SonarqubeProject } from '../../provider/types';
+import { SonarqubeProject } from '../../provider/types/v1';
 
 const PROJECT_KEY_PREFIX = 'sonarqube-project';
 export function createProjectEntityIdentifier(key: string): string {

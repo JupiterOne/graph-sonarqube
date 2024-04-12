@@ -1,5 +1,5 @@
 import { createProjectEntity } from './converter';
-import { SonarqubeProject } from '../../provider/types';
+import { SonarqubeProject } from '../../provider/types/v1';
 
 describe('#createProjectEntity', () => {
   test('should convert to entity', () => {

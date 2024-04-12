@@ -1,5 +1,5 @@
 import { createFindingEntity } from './converter';
-import { SonarqubeFinding } from '../../provider/types';
+import { SonarqubeFinding } from '../../provider/types/v1';
 
 describe('#createFindingEntity', () => {
   test('should convert to entity', () => {

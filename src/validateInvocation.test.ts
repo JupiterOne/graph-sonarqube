@@ -8,6 +8,7 @@ import {
 
 import { SonarqubeIntegrationConfig } from './types';
 import validateInvocation from './validateInvocation';
+import { APIVersion } from './provider/types/common';
 
 describe('#validateInvocation', () => {
   let recording: Recording;
@@ -62,6 +63,7 @@ describe('#validateInvocation', () => {
       instanceConfig: {
         baseUrl: process.env.BASE_URL || 'http://localhost:9000',
         apiToken: 'INVALID',
+        apiVersion: APIVersion.V1,
       },
     });
 
@@ -91,6 +93,7 @@ describe('#validateInvocation', () => {
       instanceConfig: {
         baseUrl: 'http://example.com',
         apiToken: process.env.API_TOKEN || 'string-value',
+        apiVersion: APIVersion.V1,
       },
     });
 

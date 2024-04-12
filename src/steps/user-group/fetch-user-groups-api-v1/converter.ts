@@ -3,12 +3,12 @@ import {
   Entity,
 } from '@jupiterone/integration-sdk-core';
 
-import { Entities } from '../constants';
-import { SonarqubeUserGroup } from '../../provider/types';
+import { Entities } from '../../constants';
+import { SonarqubeUserGroup } from '../../../provider/types/v1';
 
 const USER_GROUP_ID_PREFIX = 'sonarqube-user-group';
-export function createUserGroupEntityIdentifier(id: string): string {
-  return `${USER_GROUP_ID_PREFIX}:${id}`;
+export function getUserGroupKey(name: string): string {
+  return `${USER_GROUP_ID_PREFIX}:${name}`;
 }
 
 export function createUserGroupEntity(userGroup: SonarqubeUserGroup): Entity {
@@ -16,10 +16,10 @@ export function createUserGroupEntity(userGroup: SonarqubeUserGroup): Entity {
     entityData: {
       source: userGroup,
       assign: {
-        _key: createUserGroupEntityIdentifier(userGroup.id),
+        _key: getUserGroupKey(userGroup.name),
         _type: Entities.USER_GROUP._type,
         _class: Entities.USER_GROUP._class,
-        id: userGroup.id,
+        id: userGroup.name,
         name: userGroup.name,
         description: userGroup.description,
         membersCount: userGroup.membersCount,

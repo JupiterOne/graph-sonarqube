@@ -1,94 +1,44 @@
 import {
-  createDirectRelationship,
-  Entity,
-  IntegrationMissingKeyError,
   IntegrationStep,
   IntegrationStepExecutionContext,
-  Relationship,
-  RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
-import {
-  Entities,
-  Steps,
-  Relationships,
-  ACCOUNT_ENTITY_KEY,
-} from '../constants';
-import { createUserEntity } from './converter';
-import { createUserGroupEntityIdentifier } from '../user-group/converter';
-import { createSonarqubeClient } from '../../provider';
+import { Entities, Steps, Relationships } from '../constants';
 import { SonarqubeIntegrationConfig } from '../../types';
+import { APIVersion } from '../../provider/types/common';
+import {
+  buildUserGroupUserRelationshipsV1,
+  fetchUsersV1,
+} from './fetch-users-api-v1';
+import {
+  buildUserGroupUserRelationshipsV2,
+  fetchUsersV2,
+} from './fetch-users-api-v2v2';
 
-export function createUserGroupUserRelationship(
-  userGroup: Entity,
-  user: Entity,
-): Relationship {
-  return createDirectRelationship({
-    _class: RelationshipClass.HAS,
-    from: userGroup,
-    to: user,
-  });
-}
+const fetchUsersFnMap = {
+  [APIVersion.V1]: fetchUsersV1,
+  [APIVersion.V2]: fetchUsersV2,
+};
 
-export async function fetchUsers({
-  instance,
-  jobState,
-  logger,
-}: IntegrationStepExecutionContext<SonarqubeIntegrationConfig>) {
-  const client = createSonarqubeClient(instance.config, logger);
-  const accountEntity = (await jobState.getData(ACCOUNT_ENTITY_KEY)) as Entity;
+const buildUserGroupUserRelationshipsFnMap = {
+  [APIVersion.V1]: buildUserGroupUserRelationshipsV1,
+  [APIVersion.V2]: buildUserGroupUserRelationshipsV2,
+};
 
-  const convertedUsers: Entity[] = [];
-  const relationships: Relationship[] = [];
-  await client.iterateUsers((user) => {
-    const userEntity = createUserEntity(user);
-    convertedUsers.push(userEntity);
-    relationships.push(
-      createDirectRelationship({
-        _class: RelationshipClass.HAS,
-        from: accountEntity,
-        to: userEntity,
-      }),
-    );
-  });
-  await jobState.addEntities(convertedUsers);
-  await jobState.addRelationships(relationships);
-}
-
-export async function buildUserGroupUserRelationships({
-  instance,
-  jobState,
-  logger,
-}: IntegrationStepExecutionContext<SonarqubeIntegrationConfig>) {
-  const client = createSonarqubeClient(instance.config, logger);
-  await jobState.iterateEntities(
-    { _type: Entities.USER._type },
-    async (userEntity) => {
-      await client.iterateGroupsAssignedToUser(
-        userEntity.login as string,
-        async (userGroup) => {
-          const userGroupEntityId = createUserGroupEntityIdentifier(
-            userGroup.id,
-          );
-          const userGroupEntity = await jobState.findEntity(userGroupEntityId);
-
-          if (!userGroupEntity) {
-            throw new IntegrationMissingKeyError(
-              `Expected user group with key to exist (key=${userGroupEntityId})`,
-            );
-          }
-
-          await jobState.addRelationship(
-            createDirectRelationship({
-              _class: RelationshipClass.HAS,
-              from: userGroupEntity,
-              to: userEntity,
-            }),
-          );
-        },
-      );
-    },
+async function fetchUsers(
+  executionContext: IntegrationStepExecutionContext<SonarqubeIntegrationConfig>,
+) {
+  await fetchUsersFnMap[executionContext.instance.config.apiVersion](
+    executionContext,
   );
+}
+
+async function buildUserGroupUserRelationships(
+  executionContext: IntegrationStepExecutionContext<SonarqubeIntegrationConfig>,
+) {
+  await buildUserGroupUserRelationshipsFnMap[
+    executionContext.instance.config.apiVersion
+  ](executionContext);
 }
 
 export const userSteps: IntegrationStep<SonarqubeIntegrationConfig>[] = [

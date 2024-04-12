@@ -12,12 +12,24 @@ import {
 
 import {
   SonarqubeProject,
-  PaginatedResponse,
-  ValidationResponse,
   SonarqubeUserGroup,
   SonarqubeUser,
   SonarqubeFinding,
-} from './types';
+  SonarqubeSystemInfo,
+  ValidationResponse,
+} from './types/v1';
+import {
+  SonarqubeGroupMembership,
+  SonarqubeUserGroupV2,
+  SonarqubeUserV2,
+} from './types/v2';
+import {
+  APIVersion,
+  APIVersionBaseUrl,
+  PaginatedResponse,
+  PaginationQueryParams,
+} from './types/common';
+import { SonarqubeIntegrationConfig } from '../types';
 
 /**
  * default: 100, max: ?
@@ -25,10 +37,6 @@ import {
 const ITEMS_PER_PAGE = 100;
 
 export type ResourceIteratee<T> = (each: T) => Promise<void> | void;
-export type PageErrorHandler = ({
-  err: Error,
-  endpoint: string,
-}) => Promise<void> | void;
 
 export enum HttpMethod {
   GET = 'get',
@@ -36,62 +44,82 @@ export enum HttpMethod {
 }
 
 export class SonarqubeClient {
-  private readonly baseUrl: string;
   private readonly authorization: string;
-  private readonly logger: IntegrationLogger;
 
-  constructor(baseUrl: string, apiToken: string, logger: IntegrationLogger) {
-    this.baseUrl = baseUrl;
-    this.authorization = Buffer.from(`${apiToken}:`).toString('base64');
+  constructor(
+    readonly config: SonarqubeIntegrationConfig,
+    readonly logger: IntegrationLogger,
+  ) {
+    this.authorization = Buffer.from(`${config.apiToken}:`).toString('base64');
     this.logger = logger;
+  }
+
+  async fetchSystemInfo() {
+    return this.makeSingularRequest('/system/info') as Promise<
+      SonarqubeSystemInfo
+    >;
   }
 
   async iterateProjects(
     iteratee: ResourceIteratee<SonarqubeProject>,
     params?: NodeJS.Dict<string | string[]>,
   ): Promise<void> {
-    return this.iterateResources<'components', SonarqubeProject>(
-      '/projects/search',
-      'components',
+    return this.iterateResources<'components', SonarqubeProject>({
+      endpoint: '/projects/search',
+      iterableObjectKey: 'components',
       iteratee,
       params,
-    );
+    });
   }
 
-  async iterateUserGroups(
+  async iterateUserGroupsV1(
     iteratee: ResourceIteratee<SonarqubeUserGroup>,
     params?: NodeJS.Dict<string | string[]>,
   ): Promise<void> {
-    return this.iterateResources<'groups', SonarqubeUserGroup>(
-      '/user_groups/search',
-      'groups',
+    return this.iterateResources<'groups', SonarqubeUserGroup>({
+      endpoint: '/user_groups/search',
+      iterableObjectKey: 'groups',
       iteratee,
       params,
-    );
+    });
   }
 
-  async iterateUsers(
+  async iterateUserGroupsV2(
+    iteratee: ResourceIteratee<SonarqubeUserGroupV2>,
+    params?: NodeJS.Dict<string | string[]>,
+  ): Promise<void> {
+    return this.iterateResources<'groups', SonarqubeUserGroupV2>({
+      endpoint: '/authorizations/groups',
+      iterableObjectKey: 'groups',
+      iteratee,
+      params,
+      endpointVersion: APIVersion.V2,
+    });
+  }
+
+  async iterateUsersV1(
     iteratee: ResourceIteratee<SonarqubeUser>,
     params?: NodeJS.Dict<string | string[]>,
   ): Promise<void> {
-    return this.iterateResources<'users', SonarqubeUser>(
-      '/users/search',
-      'users',
+    return this.iterateResources<'users', SonarqubeUser>({
+      endpoint: '/users/search',
+      iterableObjectKey: 'users',
       iteratee,
       params,
-    );
+    });
   }
 
-  async iterateProjectFindings(
-    iteratee: ResourceIteratee<SonarqubeFinding>,
+  async iterateUsersV2(
+    iteratee: ResourceIteratee<SonarqubeUserV2>,
     params?: NodeJS.Dict<string | string[]>,
   ): Promise<void> {
-    return this.iterateResources<'issues', SonarqubeFinding>(
-      '/issues/search',
-      'issues',
+    return this.iterateResources<'users', SonarqubeUserV2>({
+      endpoint: '/users-management/users',
+      iterableObjectKey: 'users',
       iteratee,
       params,
-    );
+      endpointVersion: APIVersion.V2,
+    });
   }
 
   async iterateGroupsAssignedToUser(
@@ -99,12 +127,37 @@ export class SonarqubeClient {
     iteratee: ResourceIteratee<SonarqubeUserGroup>,
     params?: NodeJS.Dict<string | string[]>,
   ): Promise<void> {
-    return this.iterateResources<'groups', SonarqubeUserGroup>(
-      '/users/groups',
-      'groups',
+    return this.iterateResources<'groups', SonarqubeUserGroup>({
+      endpoint: '/users/groups',
+      iterableObjectKey: 'groups',
       iteratee,
-      { login, ...params },
-    );
+      params: { login, ...params },
+    });
+  }
+
+  async iterateGroupMemberships(
+    iteratee: ResourceIteratee<SonarqubeGroupMembership>,
+    params?: NodeJS.Dict<string | string[]>,
+  ): Promise<void> {
+    return this.iterateResources<'groupMemberships', SonarqubeGroupMembership>({
+      endpoint: '/authorizations/group-memberships',
+      iterableObjectKey: 'groupMemberships',
+      iteratee,
+      params,
+      endpointVersion: APIVersion.V2,
+    });
+  }
+
+  async iterateProjectFindings(
+    iteratee: ResourceIteratee<SonarqubeFinding>,
+    params?: NodeJS.Dict<string | string[]>,
+  ): Promise<void> {
+    return this.iterateResources<'issues', SonarqubeFinding>({
+      endpoint: '/issues/search',
+      iterableObjectKey: 'issues',
+      iteratee,
+      params,
+    });
   }
 
   async fetchAuthenticationValidate(): Promise<ValidationResponse> {
@@ -113,8 +166,12 @@ export class SonarqubeClient {
     >;
   }
 
-  private async makeRequest(endpoint: string): Promise<Response> {
-    const resourceUrl = `${this.baseUrl}/api${endpoint}`;
+  private async makeRequest(
+    endpoint: string,
+    endpointVersion: APIVersion = APIVersion.V1,
+  ): Promise<Response> {
+    const apiBaseUrl = APIVersionBaseUrl[endpointVersion];
+    const resourceUrl = `${this.config.baseUrl}${apiBaseUrl}${endpoint}`;
 
     const response: Response = await fetch(resourceUrl, {
       method: 'get',
@@ -152,12 +209,19 @@ export class SonarqubeClient {
     return response.json();
   }
 
-  private async iterateResources<T extends string, U>(
-    endpoint: string,
-    iterableObjectKey: T,
-    iteratee: ResourceIteratee<U>,
-    params?: NodeJS.Dict<string | string[]>,
-  ): Promise<void> {
+  private async iterateResources<T extends string, U>({
+    endpoint,
+    iterableObjectKey,
+    iteratee,
+    params,
+    endpointVersion = APIVersion.V1,
+  }: {
+    endpoint: string;
+    iterableObjectKey: T;
+    iteratee: ResourceIteratee<U>;
+    params?: NodeJS.Dict<string | string[]>;
+    endpointVersion?: APIVersion;
+  }): Promise<void> {
     let page = 1;
 
     do {
@@ -176,18 +240,24 @@ export class SonarqubeClient {
         break;
       }
 
+      const paginationQueryParms = PaginationQueryParams[endpointVersion];
+
       const searchParams = new URLSearchParams({
-        p: String(page),
-        ps: String(ITEMS_PER_PAGE),
+        [paginationQueryParms.pageIndex]: String(page),
+        [paginationQueryParms.pageSize]: String(ITEMS_PER_PAGE),
         ...params,
       });
 
       const parametizedEndpoint = `${endpoint}?${searchParams.toString()}`;
 
-      const response: Response = await this.makeRequest(parametizedEndpoint);
+      const response: Response = await this.makeRequest(
+        parametizedEndpoint,
+        endpointVersion,
+      );
       const result: PaginatedResponse<T, U> = await response.json();
-      if (Array.isArray(result[iterableObjectKey])) {
-        for (const resource of result[iterableObjectKey]) {
+      const items = result[iterableObjectKey];
+      if (Array.isArray(items)) {
+        for (const resource of items) {
           await iteratee(resource);
         }
       } else {
@@ -197,7 +267,7 @@ export class SonarqubeClient {
         });
       }
 
-      if (result[iterableObjectKey].length) {
+      if (items.length) {
         page += 1;
       } else {
         page = 0; // stop pagination, we've reached the end of the line

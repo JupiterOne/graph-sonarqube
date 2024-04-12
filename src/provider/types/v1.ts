@@ -1,3 +1,11 @@
+export interface SonarqubeSystemInfo {
+  Health: string;
+  System: {
+    Version: string;
+    Edition: string;
+  };
+}
+
 export interface SonarqubeProject {
   key: string;
   name: string;
@@ -8,7 +16,6 @@ export interface SonarqubeProject {
 }
 
 export interface SonarqubeUserGroup {
-  id: string; // This value is unique but is NOT what ties relationships to users
   name: string; // This value is unique and is what ties relationships to users
   description: string;
   membersCount?: number;
@@ -55,16 +62,6 @@ export interface SonarqubeFinding {
   scope: string;
   quickFixAvailable: boolean;
 }
-
-export interface Pagination {
-  pageIndex: number;
-  pageSize: number;
-  total: number;
-}
-
-export type PaginatedResponse<T extends string, U> = { paging: Pagination } & {
-  [K in T]: U[];
-};
 
 export interface ValidationResponse {
   valid: boolean;

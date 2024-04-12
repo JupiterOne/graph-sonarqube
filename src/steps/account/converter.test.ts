@@ -1,4 +1,6 @@
-import { createAccountEntity } from './converter';
+import { APIVersion } from '../../provider/types/common';
+import { Entities } from '../constants';
+import { createAccountEntity, getAccountEntityKey } from './converter';
 import { createMockStepExecutionContext } from '@jupiterone/integration-sdk-testing';
 
 describe('#createAccountEntity', () => {
@@ -7,6 +9,7 @@ describe('#createAccountEntity', () => {
       instanceConfig: {
         baseUrl: process.env.BASE_URL || 'http://localhost:9000',
         apiToken: process.env.API_TOKEN || 'string-value',
+        apiVersion: APIVersion.V1,
       },
     });
 
@@ -14,9 +17,9 @@ describe('#createAccountEntity', () => {
 
     expect(entity).toEqual(
       expect.objectContaining({
-        _key: 'sonarqube_account',
-        _type: 'sonarqube_account',
-        _class: ['Account'],
+        _key: getAccountEntityKey(context.instance.id),
+        _type: Entities.ACCOUNT._type,
+        _class: Entities.ACCOUNT._class,
       }),
     );
   });

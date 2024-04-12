@@ -1,25 +1,22 @@
-import { createUserEntity } from './converter';
-import { SonarqubeUser } from '../../provider/types';
+import { SonarqubeUserV2 } from '../../../provider/types/v2';
+import { createUserV2Entity } from './converter';
 
 describe('#createUserEntity', () => {
   test('should convert to entity', () => {
     const user = {
+      id: 'testId',
       login: 'userlogin1',
       name: 'User Name 1',
-      active: true,
       email: 'user1@email.org',
-      groups: ['user-group-1'],
-      tokensCount: 0,
-      local: true,
-      externalIdentity: 'userlogin1',
+      active: true,
       externalProvider: 'sonarqube',
-    } as SonarqubeUser;
+    } as SonarqubeUserV2;
 
-    const entity = createUserEntity(user);
+    const entity = createUserV2Entity(user);
 
     expect(entity).toEqual(
       expect.objectContaining({
-        _key: 'sonarqube-user:userlogin1',
+        _key: 'sonarqube-user:testId',
         _type: 'sonarqube_user',
         _class: ['User'],
         username: 'userlogin1',
@@ -28,9 +25,6 @@ describe('#createUserEntity', () => {
         name: 'User Name 1',
         login: 'userlogin1',
         active: true,
-        tokensCount: 0,
-        local: true,
-        externalIdentity: 'userlogin1',
         externalProvider: 'sonarqube',
         _rawData: [
           {

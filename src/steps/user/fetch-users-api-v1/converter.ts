@@ -3,12 +3,11 @@ import {
   Entity,
 } from '@jupiterone/integration-sdk-core';
 
-import { Entities } from '../constants';
-import { SonarqubeUser } from '../../provider/types';
+import { Entities } from '../../constants';
+import { SonarqubeUser } from '../../../provider/types/v1';
 
-const USER_LOGIN_PREFIX = 'sonarqube-user';
-export function createUserEntityIdentifier(login: string): string {
-  return `${USER_LOGIN_PREFIX}:${login}`;
+export function getUserEntityKey(login: string): string {
+  return `sonarqube-user:${login}`;
 }
 
 export function createUserEntity(user: SonarqubeUser): Entity {
@@ -16,7 +15,7 @@ export function createUserEntity(user: SonarqubeUser): Entity {
     entityData: {
       source: user,
       assign: {
-        _key: createUserEntityIdentifier(user.login),
+        _key: getUserEntityKey(user.login),
         _type: Entities.USER._type,
         _class: Entities.USER._class,
         username: user.login,

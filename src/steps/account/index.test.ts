@@ -4,6 +4,7 @@ import {
   setupRecording,
 } from '@jupiterone/integration-sdk-testing';
 import { fetchAccount } from '.';
+import { APIVersion } from '../../provider/types/common';
 
 describe('#fetchAccount', () => {
   let recording: Recording;
@@ -29,6 +30,7 @@ describe('#fetchAccount', () => {
       instanceConfig: {
         baseUrl: process.env.BASE_URL || 'http://localhost:9000',
         apiToken: process.env.API_TOKEN || 'string-value',
+        apiVersion: APIVersion.V1,
       },
     });
     await fetchAccount(context);
