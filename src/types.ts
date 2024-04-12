@@ -1,6 +1,5 @@
 import { IntegrationInstanceConfig } from '@jupiterone/integration-sdk-core';
 import { APIVersion } from './provider/types/common';
-import { SonarqubeClient } from './provider/SonarqubeClient';
 
 export interface SonarqubeIntegrationConfig extends IntegrationInstanceConfig {
   baseUrl: string;
