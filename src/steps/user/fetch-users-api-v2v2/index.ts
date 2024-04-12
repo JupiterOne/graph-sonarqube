@@ -25,7 +25,7 @@ export async function fetchUsersV2(
     const userEntity = createUserV2Entity(user);
     if (userEntity) {
       userEntities.push(userEntity);
-      const accountHasUserRelationship = await buildAccountRelationship(
+      const accountHasUserRelationship = buildAccountRelationship(
         executionContext,
         userEntity._key,
         userEntity._type,

@@ -24,7 +24,7 @@ export async function fetchUsersV1(
   await client.iterateUsersV1(async (user) => {
     const userEntity = createUserEntity(user);
     convertedUsers.push(userEntity);
-    const accountHasUserRelationship = await buildAccountRelationship(
+    const accountHasUserRelationship = buildAccountRelationship(
       executionContext,
       userEntity._key,
       userEntity._type,

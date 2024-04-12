@@ -7,7 +7,7 @@ import { SonarqubeIntegrationConfig } from '../types';
 import { getAccountEntityKey } from './account/converter';
 import { Entities } from './constants';
 
-export async function buildAccountRelationship(
+export function buildAccountRelationship(
   {
     instance,
     jobState,

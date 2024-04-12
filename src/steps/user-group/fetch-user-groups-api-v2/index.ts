@@ -15,7 +15,7 @@ export async function fetchUserGroupsV2(
     const userGroupEntity = createUserGroupV2Entity(userGroup);
     if (userGroupEntity) {
       await jobState.addEntity(userGroupEntity);
-      const accountHasUserGroupRelationship = await buildAccountRelationship(
+      const accountHasUserGroupRelationship = buildAccountRelationship(
         executionContext,
         userGroupEntity._key,
         userGroupEntity._type,

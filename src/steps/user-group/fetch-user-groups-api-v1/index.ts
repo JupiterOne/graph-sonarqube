@@ -16,7 +16,7 @@ export async function fetchUserGroupsV1(
       createUserGroupEntity(userGroup),
     );
 
-    const accountHasUserGroupRelationship = await buildAccountRelationship(
+    const accountHasUserGroupRelationship = buildAccountRelationship(
       executionContext,
       userGroupEntity._key,
       userGroupEntity._type,
