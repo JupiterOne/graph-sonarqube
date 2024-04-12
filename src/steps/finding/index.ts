@@ -9,7 +9,7 @@ import {
 import { Entities, Relationships, Steps } from '../constants';
 import { createSonarqubeClient } from '../../provider';
 import { SonarqubeIntegrationConfig } from '../../types';
-import { SonarqubeProject } from '../../provider/types';
+import { SonarqubeProject } from '../../provider/types/v1';
 import { createFindingEntity } from './converter';
 
 const severityList = ['INFO', 'MINOR', 'MAJOR', 'CRITICAL', 'BLOCKER'];

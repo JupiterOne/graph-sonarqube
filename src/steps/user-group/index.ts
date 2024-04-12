@@ -1,42 +1,25 @@
 import {
-  createDirectRelationship,
-  Entity,
   IntegrationStep,
   IntegrationStepExecutionContext,
-  RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
-import {
-  ACCOUNT_ENTITY_KEY,
-  Entities,
-  Relationships,
-  Steps,
-} from '../constants';
-import { createUserGroupEntity } from './converter';
-import { createSonarqubeClient } from '../../provider';
+import { APIVersion } from '../../provider/types/common';
+import { fetchUserGroupsV1 } from './fetch-user-groups-api-v1';
+import { fetchUserGroupsV2 } from './fetch-user-groups-api-v2';
 import { SonarqubeIntegrationConfig } from '../../types';
+import { Steps, Entities, Relationships } from '../constants';
 
-export async function fetchUserGroups({
-  instance,
-  jobState,
-  logger,
-}: IntegrationStepExecutionContext<SonarqubeIntegrationConfig>) {
-  const accountEntity = (await jobState.getData(ACCOUNT_ENTITY_KEY)) as Entity;
-  const client = createSonarqubeClient(instance.config, logger);
+const fetchUserGroupsFnMap = {
+  [APIVersion.V1]: fetchUserGroupsV1,
+  [APIVersion.V2]: fetchUserGroupsV2,
+};
 
-  await client.iterateUserGroups(async (userGroup) => {
-    const userGroupEntity = await jobState.addEntity(
-      createUserGroupEntity(userGroup),
-    );
-
-    await jobState.addRelationship(
-      createDirectRelationship({
-        _class: RelationshipClass.HAS,
-        from: accountEntity,
-        to: userGroupEntity,
-      }),
-    );
-  });
+async function fetchUserGroups(
+  executionContext: IntegrationStepExecutionContext<SonarqubeIntegrationConfig>,
+) {
+  await fetchUserGroupsFnMap[executionContext.instance.config.apiVersion](
+    executionContext,
+  );
 }
 
 export const userGroupSteps: IntegrationStep<SonarqubeIntegrationConfig>[] = [

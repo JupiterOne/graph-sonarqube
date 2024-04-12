@@ -1,14 +1,10 @@
+import { SonarqubeIntegrationConfig } from '../types';
 import { SonarqubeClient } from './SonarqubeClient';
 import { IntegrationLogger } from '@jupiterone/integration-sdk-core';
 
-type SonarqubeClientConfig = {
-  baseUrl: string;
-  apiToken: string;
-};
-
 export function createSonarqubeClient(
-  config: SonarqubeClientConfig,
+  config: SonarqubeIntegrationConfig,
   logger: IntegrationLogger,
 ): SonarqubeClient {
-  return new SonarqubeClient(config.baseUrl, config.apiToken, logger);
+  return new SonarqubeClient(config, logger);
 }

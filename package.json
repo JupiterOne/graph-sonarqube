@@ -16,6 +16,7 @@
     "access": "public"
   },
   "scripts": {
+    "document": "j1-integration document",
     "start": "j1-integration collect",
     "graph": "j1-integration visualize",
     "graph:types": "j1-integration visualize-types",
@@ -23,6 +24,7 @@
     "format": "prettier --write '**/*.{ts,js,json,css,md,yml}'",
     "type-check": "tsc",
     "test": "jest",
+    "test:env": "LOAD_ENV=1 yarn test",
     "test:ci": "yarn lint && yarn type-check && yarn test",
     "build": "tsc -p tsconfig.dist.json --declaration",
     "prepush": "yarn lint && yarn type-check && jest --changedSince main",

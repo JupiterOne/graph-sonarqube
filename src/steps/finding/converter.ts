@@ -5,7 +5,7 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import { Entities } from '../constants';
-import { SonarqubeFinding } from '../../provider/types';
+import { SonarqubeFinding } from '../../provider/types/v1';
 
 const FINDING_KEY_PREFIX = 'sonarqube-finding';
 export function createFindingEntityIdentifier(key: string): string {
