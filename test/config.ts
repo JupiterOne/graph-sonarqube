@@ -13,7 +13,7 @@ if (process.env.LOAD_ENV) {
 }
 
 const DEFAULT_API_TOKEN = 'dummy-sonarqube-api-token';
-const DEFAULT_BASE_URL = 'http://127.0.0.1:9001';
+const DEFAULT_BASE_URL = 'http://127.0.0.1:9000';
 const DEFAULT_API_VERSION = APIVersion.V1;
 
 export function buildStepTestConfigForStep(stepId: string): StepTestConfig {

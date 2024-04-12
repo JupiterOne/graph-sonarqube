@@ -12,6 +12,14 @@ export function setupSonarqubeRecording(
 ): Recording {
   return setupRecording({
     ...input,
+    options: {
+      matchRequestsBy: {
+        url: {
+          hostname: false,
+        },
+      },
+      recordFailedRequests: true,
+    },
     redactedRequestHeaders: ['Authorization'],
     mutateEntry: mutations.unzipGzippedRecordingEntry,
   });
