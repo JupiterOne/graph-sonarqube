@@ -13,7 +13,7 @@ import {
 import {
   buildUserGroupUserRelationshipsV2,
   fetchUsersV2,
-} from './fetch-users-api-v2v2';
+} from './fetch-users-api-v2';
 
 const fetchUsersFnMap = {
   [APIVersion.V1]: fetchUsersV1,
