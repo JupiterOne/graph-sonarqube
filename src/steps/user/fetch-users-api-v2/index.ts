@@ -10,8 +10,8 @@ import { SonarqubeUserV2 } from '../../../provider/types/v2';
 import { SonarqubeIntegrationConfig } from '../../../types';
 import { Entities } from '../../constants';
 import { getUserGroupV2Key } from '../../user-group/fetch-user-groups-api-v2/converter';
-import { buildAccountRelationship } from '../../utils';
 import { createUserV2Entity, getUserV2EntityKey } from './converter';
+import { buildAccountRelationship } from '../../utils';
 
 export async function fetchUsersV2(
   executionContext: IntegrationStepExecutionContext<SonarqubeIntegrationConfig>,
@@ -25,6 +25,7 @@ export async function fetchUsersV2(
     const userEntity = createUserV2Entity(user);
     if (userEntity) {
       userEntities.push(userEntity);
+
       const accountHasUserRelationship = buildAccountRelationship(
         executionContext,
         userEntity._key,
