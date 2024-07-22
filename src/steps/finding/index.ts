@@ -27,7 +27,7 @@ import {
 import { APIVersion } from '../../provider/types/common';
 import { createProjectEntityIdentifier } from '../project/converter';
 
-async function getSeverities(instanceConfig: SonarqubeIntegrationConfig) {
+function getSeverities(instanceConfig: SonarqubeIntegrationConfig) {
   const { severities, apiVersion } = instanceConfig;
   const severitiesSet = new Set(
     severities?.split(',').map((severity) => FINDINGS_SEVERITIES[severity]),
@@ -44,10 +44,12 @@ async function getSeverities(instanceConfig: SonarqubeIntegrationConfig) {
     : Array.from(severitiesSet);
 }
 
-async function getFilterParams(instanceConfig: SonarqubeIntegrationConfig) {
+function getFilterParams(
+  instanceConfig: SonarqubeIntegrationConfig,
+): NodeJS.Dict<string | string[]> {
   const { apiVersion, status, createdInLast, types } = instanceConfig;
 
-  let filterParams;
+  let filterParams: NodeJS.Dict<string | string[]>;
 
   if (apiVersion === APIVersion.V1) {
     // V1 -> below 10.4 version
@@ -66,9 +68,9 @@ async function getFilterParams(instanceConfig: SonarqubeIntegrationConfig) {
       issueStatuses: Array.from(statusesSet).join(','),
       impactSoftwareQualities: Array.from(typesSet).join(','),
     };
-    filterParams['createdInLast'] = createdInLast || DEFAULT_CREATED_IN_LAST;
-    return filterParams;
   }
+  filterParams['createdInLast'] = createdInLast || DEFAULT_CREATED_IN_LAST;
+  return filterParams;
 }
 
 export async function fetchFindings({
@@ -78,8 +80,8 @@ export async function fetchFindings({
 }: IntegrationStepExecutionContext<SonarqubeIntegrationConfig>) {
   const client = createSonarqubeClient(instance.config, logger);
 
-  const severities = await getSeverities(instance.config);
-  const filerParams = await getFilterParams(instance.config);
+  const severities = getSeverities(instance.config);
+  const filterParams = getFilterParams(instance.config);
 
   await jobState.iterateEntities(
     { _type: Entities.PROJECT._type },
@@ -96,9 +98,9 @@ export async function fetchFindings({
       // by project and severity.
       for (const severity of severities) {
         if (instance.config.apiVersion == APIVersion.V1) {
-          filerParams['severities'] = severity;
+          filterParams['severities'] = severity;
         } else {
-          filerParams['impactSeverities'] = severity;
+          filterParams['impactSeverities'] = severity;
         }
 
         await client.iterateProjectFindings(
@@ -125,7 +127,7 @@ export async function fetchFindings({
               );
             }
           },
-          { componentKeys: project.key, ...filerParams },
+          { componentKeys: project.key, ...filterParams },
         );
       }
     },
