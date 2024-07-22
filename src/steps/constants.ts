@@ -34,6 +34,14 @@ export const FINDING_TYPES = {
   VULNERABILITY: 'SECURITY',
 };
 
+export const INGESTION_SOURCE_IDS = {
+  ACCOUNT: 'accounts',
+  PROJECT: 'projects',
+  USERS: 'users',
+  USER_GROUPS: 'user-groups',
+  FINDINGS: 'findings',
+};
+
 export const Steps = {
   ACCOUNT: 'fetch-account',
   PROJECTS: 'fetch-projects',

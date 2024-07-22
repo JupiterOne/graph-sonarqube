@@ -12,6 +12,7 @@ import {
   FINDING_STATUSES,
   FINDING_TYPES,
   FINDINGS_SEVERITIES,
+  INGESTION_SOURCE_IDS,
   Relationships,
   Steps,
   V1_SEVERITIES_VALUES,
@@ -138,6 +139,7 @@ export const findingSteps: IntegrationStep<SonarqubeIntegrationConfig>[] = [
   {
     id: Steps.FINDINGS,
     name: 'Fetch Project Findings',
+    ingestionSourceId: INGESTION_SOURCE_IDS.FINDINGS,
     entities: [Entities.FINDING],
     executionHandler: fetchFindings,
     relationships: [Relationships.PROJECT_HAS_FINDING],
