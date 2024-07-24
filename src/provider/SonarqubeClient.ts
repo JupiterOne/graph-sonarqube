@@ -206,7 +206,7 @@ export class SonarqubeClient {
   private async makeSingularRequest<T>(url: string): Promise<T | null> {
     const response = await this.makeRequest(`${url}`);
 
-    return response.json();
+    return response.json() as T;
   }
 
   private async iterateResources<T extends string, U>({
@@ -266,7 +266,8 @@ export class SonarqubeClient {
         parametizedEndpoint,
         endpointVersion,
       );
-      const result: PaginatedResponse<T, U> = await response.json();
+      const result: PaginatedResponse<T, U> =
+        (await response.json()) as PaginatedResponse<T, U>;
       const items = result[iterableObjectKey];
       if (Array.isArray(items)) {
         for (const resource of items) {
