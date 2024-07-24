@@ -4,7 +4,7 @@ export const ACCOUNT_ENTITY_KEY = 'sonarqube:account';
 
 export const FINDINGS_SEVERITIES = {
   INFO: 'LOW',
-  MINOR: 'MEDIUM',
+  MINOR: 'LOW',
   MAJOR: 'MEDIUM',
   CRITICAL: 'HIGH',
   BLOCKER: 'HIGH',
