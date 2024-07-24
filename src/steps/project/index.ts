@@ -10,6 +10,7 @@ import {
 import {
   ACCOUNT_ENTITY_KEY,
   Entities,
+  INGESTION_SOURCE_IDS,
   Relationships,
   Steps,
 } from '../constants';
@@ -48,6 +49,7 @@ export const projectSteps: IntegrationStep<SonarqubeIntegrationConfig>[] = [
     id: Steps.PROJECTS,
     name: 'Projects',
     entities: [Entities.PROJECT],
+    ingestionSourceId: INGESTION_SOURCE_IDS.PROJECT,
     executionHandler: fetchProjects,
     relationships: [Relationships.ACCOUNT_HAS_PROJECT],
     dependsOn: [Steps.ACCOUNT],

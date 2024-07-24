@@ -2,6 +2,46 @@ import { RelationshipClass } from '@jupiterone/integration-sdk-core';
 
 export const ACCOUNT_ENTITY_KEY = 'sonarqube:account';
 
+export const FINDINGS_SEVERITIES = {
+  INFO: 'LOW',
+  MINOR: 'MEDIUM',
+  MAJOR: 'MEDIUM',
+  CRITICAL: 'HIGH',
+  BLOCKER: 'HIGH',
+};
+
+export const V1_SEVERITIES_VALUES = [
+  'INFO',
+  'MINOR',
+  'MAJOR',
+  'CRITICAL',
+  'BLOCKER',
+];
+export const V2_SEVERITIES_VALUES = ['LOW', 'MEDIUM', 'HIGH'];
+export const DEFAULT_CREATED_IN_LAST = '10d';
+
+export const FINDING_STATUSES = {
+  OPEN: 'OPEN',
+  CONFIRMED: 'CONFIRMED',
+  REOPENED: 'FALSE_POSITIVE',
+  RESOLVED: 'ACCEPTED',
+  CLOSED: 'FIXED',
+};
+
+export const FINDING_TYPES = {
+  CODE_SMELL: 'MAINTAINABILITY',
+  BUG: 'RELIABILITY',
+  VULNERABILITY: 'SECURITY',
+};
+
+export const INGESTION_SOURCE_IDS = {
+  ACCOUNT: 'accounts',
+  PROJECT: 'projects',
+  USERS: 'users',
+  USER_GROUPS: 'user-groups',
+  FINDINGS: 'findings',
+};
+
 export const Steps = {
   ACCOUNT: 'fetch-account',
   PROJECTS: 'fetch-projects',

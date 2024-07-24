@@ -13,6 +13,26 @@ const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
     mask: false,
     optional: true,
   },
+  severities: {
+    type: 'string',
+    mask: false,
+    optional: true,
+  },
+  status: {
+    type: 'string',
+    mask: false,
+    optional: true,
+  },
+  createdInLast: {
+    type: 'string',
+    mask: false,
+    optional: true,
+  },
+  types: {
+    type: 'string',
+    mask: false,
+    optional: true,
+  },
 };
 
 export default instanceConfigFields;
