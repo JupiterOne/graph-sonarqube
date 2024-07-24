@@ -36,7 +36,7 @@ function getSeverities(instanceConfig: SonarqubeIntegrationConfig) {
 
   // V2 -> 10.4 or above version
   if (apiVersion == APIVersion.V1) {
-    return severities ? severities: V1_SEVERITIES_VALUES;
+    return severities ? severities.split(',') : V1_SEVERITIES_VALUES;
   }
   return severitiesSet.size === 0
     ? V2_SEVERITIES_VALUES
