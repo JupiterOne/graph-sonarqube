@@ -7,7 +7,6 @@ export const ingestionConfig: IntegrationIngestionConfigFieldMap = {
     description: 'SonarQube Accounts',
     defaultsToDisabled: false,
   },
-
   [INGESTION_SOURCE_IDS.FINDINGS]: {
     title: 'Users',
     description: 'SonarQube Issues',
@@ -18,13 +17,11 @@ export const ingestionConfig: IntegrationIngestionConfigFieldMap = {
     description: 'SonarQube Users',
     defaultsToDisabled: false,
   },
-
   [INGESTION_SOURCE_IDS.PROJECT]: {
     title: 'Projects',
     description: 'SonarQube Projects',
     defaultsToDisabled: false,
   },
-
   [INGESTION_SOURCE_IDS.USER_GROUPS]: {
     title: 'User Groups',
     description: 'SonarQube Groups',
