@@ -7,11 +7,8 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import {
-  DEFAULT_CREATED_IN_LAST,
+  DEFAULT_FINDING_INGEST_SINCE_DAYS,
   Entities,
-  FINDING_STATUSES,
-  FINDING_TYPES,
-  FINDINGS_SEVERITIES,
   INGESTION_SOURCE_IDS,
   Relationships,
   Steps,
@@ -28,47 +25,28 @@ import {
 import { APIVersion } from '../../provider/types/common';
 import { createProjectEntityIdentifier } from '../project/converter';
 
-function getSeverities(instanceConfig: SonarqubeIntegrationConfig) {
-  const { severities, apiVersion } = instanceConfig;
-  const severitiesSet = new Set(
-    severities?.split(',').map((severity) => FINDINGS_SEVERITIES[severity]),
-  );
-
-  // V2 -> 10.4 or above version
-  if (apiVersion == APIVersion.V1) {
-    return severities ? severities.split(',') : V1_SEVERITIES_VALUES;
-  }
-  return severitiesSet.size === 0
-    ? V2_SEVERITIES_VALUES
-    : Array.from(severitiesSet);
-}
-
 function getFilterParams(
   instanceConfig: SonarqubeIntegrationConfig,
 ): NodeJS.Dict<string | string[]> {
-  const { apiVersion, status, createdInLast, types } = instanceConfig;
+  const { apiVersion, findingStatus, findingsIngestSinceDays, findingTypes } =
+    instanceConfig;
 
-  let filterParams: NodeJS.Dict<string | string[]>;
+  const filterParams: NodeJS.Dict<string | string[]> = {};
 
-  if (apiVersion === APIVersion.V1) {
-    // V1 -> below 10.4 version
-    filterParams = {
-      status,
-      types,
-    };
-  } else {
-    const statusesSet = new Set(
-      status?.split(',').map((status) => FINDING_STATUSES[status]),
-    );
-    const typesSet = new Set(
-      types?.split(',').map((type) => FINDING_TYPES[type]),
-    );
-    filterParams = {
-      issueStatuses: Array.from(statusesSet).join(','),
-      impactSoftwareQualities: Array.from(typesSet).join(','),
-    };
+  const statusKey = apiVersion === APIVersion.V1 ? 'status' : 'issueStatuses';
+  const typesKey =
+    apiVersion === APIVersion.V1 ? 'types' : 'impactSoftwareQualities';
+
+  if (findingStatus) {
+    filterParams[statusKey] = findingStatus;
   }
-  filterParams['createdInLast'] = createdInLast || DEFAULT_CREATED_IN_LAST;
+  if (findingTypes) {
+    filterParams[typesKey] = findingTypes;
+  }
+
+  filterParams['createdInLast'] =
+    `${findingsIngestSinceDays || DEFAULT_FINDING_INGEST_SINCE_DAYS}d`;
+
   return filterParams;
 }
 
@@ -79,7 +57,12 @@ export async function fetchFindings({
 }: IntegrationStepExecutionContext<SonarqubeIntegrationConfig>) {
   const client = createSonarqubeClient(instance.config, logger);
 
-  const severities = getSeverities(instance.config);
+  const severityList = instance.config.findingSeverities
+    ? instance.config.findingSeverities
+    : instance.config.apiVersion === APIVersion.V1
+      ? V1_SEVERITIES_VALUES
+      : V2_SEVERITIES_VALUES;
+
   const filterParams = getFilterParams(instance.config);
 
   await jobState.iterateEntities(
@@ -95,7 +78,7 @@ export async function fetchFindings({
       // We need to further filter our API calls in order to minimize the chances
       // we'll hit the 10,000 limit impose by the API.  We're currently filtering
       // by project and severity.
-      for (const severity of severities) {
+      for (const severity of severityList) {
         if (instance.config.apiVersion == APIVersion.V1) {
           filterParams['severities'] = severity;
         } else {

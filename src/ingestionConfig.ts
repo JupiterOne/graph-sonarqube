@@ -2,11 +2,6 @@ import { IntegrationIngestionConfigFieldMap } from '@jupiterone/integration-sdk-
 import { INGESTION_SOURCE_IDS } from './steps/constants';
 
 export const ingestionConfig: IntegrationIngestionConfigFieldMap = {
-  [INGESTION_SOURCE_IDS.ACCOUNT]: {
-    title: 'Account',
-    description: 'SonarQube Accounts',
-    defaultsToDisabled: false,
-  },
   [INGESTION_SOURCE_IDS.FINDINGS]: {
     title: 'Users',
     description: 'SonarQube Issues',

@@ -18,7 +18,7 @@ export const V1_SEVERITIES_VALUES = [
   'BLOCKER',
 ];
 export const V2_SEVERITIES_VALUES = ['LOW', 'MEDIUM', 'HIGH'];
-export const DEFAULT_CREATED_IN_LAST = '10d';
+export const DEFAULT_FINDING_INGEST_SINCE_DAYS = 90;
 
 export const FINDING_STATUSES = {
   OPEN: 'OPEN',

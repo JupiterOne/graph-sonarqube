@@ -26,7 +26,7 @@ export function createAccountEntity(
         _class: Entities.ACCOUNT._class,
         id,
         name,
-        vendor: 'SonarSource'
+        vendor: 'SonarSource',
       },
     },
   });

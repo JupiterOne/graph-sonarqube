@@ -14,8 +14,8 @@ export interface SonarqubeIntegrationConfig extends IntegrationInstanceConfig {
    * where the parameter {@param endpointVersion} determines the url to query
    */
   apiVersion: APIVersion;
-  severities?: string;
-  status?: string;
-  createdInLast?: string;
-  types?: string;
+  findingSeverities?: string[];
+  findingStatus?: string[];
+  findingsIngestSinceDays?: number;
+  findingTypes?: string[];
 }

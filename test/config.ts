@@ -15,7 +15,7 @@ if (process.env.LOAD_ENV) {
 const DEFAULT_API_TOKEN = 'dummy-sonarqube-api-token';
 const DEFAULT_BASE_URL = 'http://127.0.0.1:9000';
 const DEFAULT_API_VERSION = APIVersion.V2;
-const DEFAULT_CREATED_IN_LAST = '1m';
+const DEFAULT_CREATED_IN_LAST = 90;
 
 export function buildStepTestConfigForStep(stepId: string): StepTestConfig {
   const integrationConfig: SonarqubeIntegrationConfig = {
@@ -23,7 +23,8 @@ export function buildStepTestConfigForStep(stepId: string): StepTestConfig {
     baseUrl: process.env.BASE_URL || DEFAULT_BASE_URL,
     // Using env var to determine version since we don't want to query the system info when running a test
     apiVersion: (process.env.API_VERSION as APIVersion) || DEFAULT_API_VERSION,
-    createdInLast: process.env.CREATED_IN_LAST || DEFAULT_CREATED_IN_LAST
+    findingsIngestSinceDays:
+      process.env.CREATED_IN_LAST ? + process.env.CREATED_IN_LAST : DEFAULT_CREATED_IN_LAST,
   };
 
   return {

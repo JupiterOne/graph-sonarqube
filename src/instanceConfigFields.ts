@@ -13,22 +13,22 @@ const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
     mask: false,
     optional: true,
   },
-  severities: {
+  findingsSeverities: {
     type: 'string',
     mask: false,
     optional: true,
   },
-  status: {
+  findingStatus: {
     type: 'string',
     mask: false,
     optional: true,
   },
-  createdInLast: {
+  findingsIngestSinceDays: {
     type: 'string',
     mask: false,
     optional: true,
   },
-  types: {
+  findingTypes: {
     type: 'string',
     mask: false,
     optional: true,
