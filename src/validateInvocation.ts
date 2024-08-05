@@ -83,7 +83,7 @@ export default async function validateInvocation({
       .map((s) => s.trim());
     if (!validStatuses(findingStatus)) {
       throw new IntegrationValidationError(
-        'Invalid Finding Status. Valid severities are OPEN, CONFIRMED, REOPENED, RESOLVED, CLOSED',
+        'Invalid Finding Status. Valid statuses are OPEN, CONFIRMED, REOPENED, RESOLVED, CLOSED',
       );
     }
 
@@ -105,7 +105,7 @@ export default async function validateInvocation({
       .map((s) => s.trim());
     if (!validTypes(findingTypes)) {
       throw new IntegrationValidationError(
-        'Invalid vulnerability severities. Valid severities are CODE_SMELL,BUG,VULNERABILITY',
+        'Invalid vulnerability severities. Valid types are CODE_SMELL,BUG,VULNERABILITY',
       );
     }
 
