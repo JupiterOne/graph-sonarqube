@@ -13,7 +13,7 @@ const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
     mask: false,
     optional: true,
   },
-  findingsSeverities: {
+  findingSeverities: {
     type: 'string',
     mask: false,
     optional: true,

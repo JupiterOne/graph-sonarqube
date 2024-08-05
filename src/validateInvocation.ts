@@ -69,7 +69,7 @@ export default async function validateInvocation({
       config.findingSeverities = findingSeverities;
     } else {
       const findingSeveritiesSet = new Set(
-        config.findingSeverities.map(
+        findingSeverities.map(
           (findingSeverity) => FINDINGS_SEVERITIES[findingSeverity],
         ),
       );
@@ -91,7 +91,7 @@ export default async function validateInvocation({
       config.findingSeverities = findingStatus;
     } else {
       const findingStatusSet = new Set(
-        config.findingStatus.map(
+        findingStatus.map(
           (findingStatus) => FINDING_STATUSES[findingStatus],
         ),
       );
@@ -113,11 +113,13 @@ export default async function validateInvocation({
       config.findingTypes = findingTypes;
     } else {
       const findingStatusSet = new Set(
-        config.findingTypes.map((findingType) => FINDING_TYPES[findingType]),
+        findingTypes.map((findingType) => FINDING_TYPES[findingType]),
       );
       config.findingTypes = Array.from(findingStatusSet);
     }
   }
+
+  console.log(config);
 
   const client = createSonarqubeClient(instance.config, logger);
   try {
