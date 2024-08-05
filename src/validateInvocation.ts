@@ -119,8 +119,6 @@ export default async function validateInvocation({
     }
   }
 
-  console.log(config);
-
   const client = createSonarqubeClient(instance.config, logger);
   try {
     const systemInfo = await client.fetchSystemInfo();
