@@ -7,7 +7,6 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import {
-  DEFAULT_FINDING_INGEST_SINCE_DAYS,
   Entities,
   INGESTION_SOURCE_IDS,
   Relationships,
@@ -43,9 +42,9 @@ function getFilterParams(
   if (findingTypes) {
     filterParams[typesKey] = findingTypes;
   }
-
-  filterParams['createdInLast'] =
-    `${findingsIngestSinceDays || DEFAULT_FINDING_INGEST_SINCE_DAYS}d`;
+  if (findingsIngestSinceDays) {
+    filterParams['createdInLast'] = `${findingsIngestSinceDays}d`;
+  }
 
   return filterParams;
 }

@@ -3,12 +3,7 @@ import {
   IntegrationStepExecutionContext,
 } from '@jupiterone/integration-sdk-core';
 
-import {
-  ACCOUNT_ENTITY_KEY,
-  Entities,
-  INGESTION_SOURCE_IDS,
-  Steps,
-} from '../constants';
+import { ACCOUNT_ENTITY_KEY, Entities, Steps } from '../constants';
 import { createAccountEntity } from './converter';
 import { SonarqubeIntegrationConfig } from '../../types';
 
@@ -24,7 +19,6 @@ export const accountSteps: IntegrationStep<SonarqubeIntegrationConfig>[] = [
   {
     id: Steps.ACCOUNT,
     name: 'Fetch Account',
-    ingestionSourceId: INGESTION_SOURCE_IDS.ACCOUNT,
     entities: [Entities.ACCOUNT],
     executionHandler: fetchAccount,
     relationships: [],

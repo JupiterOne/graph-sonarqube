@@ -18,7 +18,6 @@ export const V1_SEVERITIES_VALUES = [
   'BLOCKER',
 ];
 export const V2_SEVERITIES_VALUES = ['LOW', 'MEDIUM', 'HIGH'];
-export const DEFAULT_FINDING_INGEST_SINCE_DAYS = 90;
 
 export const FINDING_STATUSES = {
   OPEN: 'OPEN',
@@ -35,7 +34,6 @@ export const FINDING_TYPES = {
 };
 
 export const INGESTION_SOURCE_IDS = {
-  ACCOUNT: 'accounts',
   PROJECT: 'projects',
   USERS: 'users',
   USER_GROUPS: 'user-groups',
