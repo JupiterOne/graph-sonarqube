@@ -55,76 +55,10 @@ export default async function validateInvocation({
     config.baseUrl = config.baseUrl.slice(0, -1);
   }
 
-  if (config.findingsIngestSinceDays !== undefined && isNaN(Number(config.findingsIngestSinceDays))) {
-    throw new IntegrationValidationError(`FINDINGS_INGEST_SINCE_DAYS must be a number if defined. Received: ${config.findingsIngestSinceDays}`);
-}
-
   const client = createSonarqubeClient(instance.config, logger);
   try {
     const systemInfo = await client.fetchSystemInfo();
     config.apiVersion = getApiVersion(systemInfo);
-
-    if (config.findingSeverities) {
-      const findingSeverities = (config.findingSeverities as unknown as string)
-        .split(',')
-        .map((s) => s.trim());
-      if (!validSeverities(findingSeverities)) {
-        throw new IntegrationValidationError(
-          'Invalid Finding severities. Valid severities are INFO, MINOR, MAJOR, CRITICAL, BLOCKER',
-        );
-      }
-
-      if (config.apiVersion == APIVersion.V1) {
-        config.findingSeverities = findingSeverities;
-      } else {
-        const findingSeveritiesSet = new Set(
-          findingSeverities.map(
-            (findingSeverity) => FINDINGS_SEVERITIES[findingSeverity],
-          ),
-        );
-        config.findingSeverities = Array.from(findingSeveritiesSet);
-      }
-    }
-
-    if (config.findingStatus) {
-      const findingStatus = (config.findingStatus as unknown as string)
-        .split(',')
-        .map((s) => s.trim());
-      if (!validStatuses(findingStatus)) {
-        throw new IntegrationValidationError(
-          'Invalid Finding Status. Valid statuses are OPEN, CONFIRMED, REOPENED, RESOLVED, CLOSED',
-        );
-      }
-
-      if (config.apiVersion == APIVersion.V1) {
-        config.findingStatus = findingStatus;
-      } else {
-        const findingStatusSet = new Set(
-          findingStatus.map((findingStatus) => FINDING_STATUSES[findingStatus]),
-        );
-        config.findingStatus = Array.from(findingStatusSet);
-      }
-    }
-
-    if (config.findingTypes) {
-      const findingTypes = (config.findingTypes as unknown as string)
-        .split(',')
-        .map((s) => s.trim());
-      if (!validTypes(findingTypes)) {
-        throw new IntegrationValidationError(
-          'Invalid vulnerability severities. Valid types are CODE_SMELL,BUG,VULNERABILITY',
-        );
-      }
-
-      if (config.apiVersion == APIVersion.V1) {
-        config.findingTypes = findingTypes;
-      } else {
-        const findingTypesSet = new Set(
-          findingTypes.map((findingType) => FINDING_TYPES[findingType]),
-        );
-        config.findingTypes = Array.from(findingTypesSet);
-      }
-    }
 
     const resp = await client.fetchAuthenticationValidate();
     if (!resp.valid) {
@@ -136,6 +70,77 @@ export default async function validateInvocation({
     logger.info({ e }, 'Error while validating the instance configuration');
     throw new IntegrationValidationError(
       'Could not verify credentials against provided Sonarqube baseUrl',
+    );
+  }
+
+  if (config.findingSeverities) {
+    const findingSeverities = (config.findingSeverities as unknown as string)
+      .split(',')
+      .map((s) => s.trim());
+    if (!validSeverities(findingSeverities)) {
+      throw new IntegrationValidationError(
+        'Invalid Finding severities. Valid severities are INFO, MINOR, MAJOR, CRITICAL, BLOCKER',
+      );
+    }
+
+    if (config.apiVersion == APIVersion.V1) {
+      config.findingSeverities = findingSeverities;
+    } else {
+      const findingSeveritiesSet = new Set(
+        findingSeverities.map(
+          (findingSeverity) => FINDINGS_SEVERITIES[findingSeverity],
+        ),
+      );
+      config.findingSeverities = Array.from(findingSeveritiesSet);
+    }
+  }
+
+  if (config.findingStatus) {
+    const findingStatus = (config.findingStatus as unknown as string)
+      .split(',')
+      .map((s) => s.trim());
+    if (!validStatuses(findingStatus)) {
+      throw new IntegrationValidationError(
+        'Invalid Finding Status. Valid statuses are OPEN, CONFIRMED, REOPENED, RESOLVED, CLOSED',
+      );
+    }
+
+    if (config.apiVersion == APIVersion.V1) {
+      config.findingStatus = findingStatus;
+    } else {
+      const findingStatusSet = new Set(
+        findingStatus.map((findingStatus) => FINDING_STATUSES[findingStatus]),
+      );
+      config.findingStatus = Array.from(findingStatusSet);
+    }
+  }
+
+  if (config.findingTypes) {
+    const findingTypes = (config.findingTypes as unknown as string)
+      .split(',')
+      .map((s) => s.trim());
+    if (!validTypes(findingTypes)) {
+      throw new IntegrationValidationError(
+        'Invalid vulnerability severities. Valid types are CODE_SMELL,BUG,VULNERABILITY',
+      );
+    }
+
+    if (config.apiVersion == APIVersion.V1) {
+      config.findingTypes = findingTypes;
+    } else {
+      const findingTypesSet = new Set(
+        findingTypes.map((findingType) => FINDING_TYPES[findingType]),
+      );
+      config.findingTypes = Array.from(findingTypesSet);
+    }
+  }
+
+  if (
+    config.findingsIngestSinceDays !== undefined &&
+    isNaN(Number(config.findingsIngestSinceDays))
+  ) {
+    throw new IntegrationValidationError(
+      `FINDINGS_INGEST_SINCE_DAYS must be a number if defined. Received: ${config.findingsIngestSinceDays}`,
     );
   }
 }

@@ -23,8 +23,9 @@ export function buildStepTestConfigForStep(stepId: string): StepTestConfig {
     baseUrl: process.env.BASE_URL || DEFAULT_BASE_URL,
     // Using env var to determine version since we don't want to query the system info when running a test
     apiVersion: (process.env.API_VERSION as APIVersion) || DEFAULT_API_VERSION,
-    findingsIngestSinceDays:
-      process.env.CREATED_IN_LAST ? + process.env.CREATED_IN_LAST : DEFAULT_CREATED_IN_LAST,
+    findingsIngestSinceDays: process.env.CREATED_IN_LAST
+      ? +process.env.CREATED_IN_LAST
+      : DEFAULT_CREATED_IN_LAST,
   };
 
   return {
