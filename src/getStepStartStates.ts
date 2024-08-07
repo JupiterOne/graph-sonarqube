@@ -10,8 +10,8 @@ export default function getStepStartStates(
 ): StepStartStates {
   context.logger.warn(
     {
-      enableFindingsIngestion: !!context.instance.config
-        .enableFindingsIngestion,
+      enableFindingsIngestion:
+        !!context.instance.config.enableFindingsIngestion,
     },
     'Findings ingestion flag',
   );

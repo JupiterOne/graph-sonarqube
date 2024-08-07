@@ -3,7 +3,12 @@ import {
   IntegrationStepExecutionContext,
 } from '@jupiterone/integration-sdk-core';
 
-import { Entities, Steps, Relationships } from '../constants';
+import {
+  Entities,
+  Steps,
+  Relationships,
+  INGESTION_SOURCE_IDS,
+} from '../constants';
 import { SonarqubeIntegrationConfig } from '../../types';
 import { APIVersion } from '../../provider/types/common';
 import {
@@ -52,6 +57,7 @@ export const userSteps: IntegrationStep<SonarqubeIntegrationConfig>[] = [
   },
   {
     id: Steps.BUILD_USER_GROUP_HAS_USER,
+    ingestionSourceId: INGESTION_SOURCE_IDS.USERS,
     name: 'Build user group user relationship',
     entities: [],
     executionHandler: buildUserGroupUserRelationships,

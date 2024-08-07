@@ -27,7 +27,6 @@ export interface Pagination {
 
 export type PaginatedResponse<T extends string, U> = {
   [Key in 'paging' | 'page']: Pagination;
-} &
-  {
-    [K in T]: U[];
-  };
+} & {
+  [K in T]: U[];
+};

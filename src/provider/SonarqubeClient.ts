@@ -55,9 +55,9 @@ export class SonarqubeClient {
   }
 
   async fetchSystemInfo() {
-    return this.makeSingularRequest('/system/info') as Promise<
-      SonarqubeSystemInfo
-    >;
+    return this.makeSingularRequest(
+      '/system/info',
+    ) as Promise<SonarqubeSystemInfo>;
   }
 
   async iterateProjects(
@@ -161,9 +161,9 @@ export class SonarqubeClient {
   }
 
   async fetchAuthenticationValidate(): Promise<ValidationResponse> {
-    return this.makeSingularRequest('/authentication/validate') as Promise<
-      ValidationResponse
-    >;
+    return this.makeSingularRequest(
+      '/authentication/validate',
+    ) as Promise<ValidationResponse>;
   }
 
   private async makeRequest(
@@ -242,10 +242,22 @@ export class SonarqubeClient {
 
       const paginationQueryParms = PaginationQueryParams[endpointVersion];
 
+      const sanitizedParams: Record<string, string> = {};
+      if (params) {
+        Object.keys(params).forEach((key) => {
+          const value = params[key];
+          if (value !== undefined) {
+            sanitizedParams[key] = Array.isArray(value)
+              ? value.join(',')
+              : value;
+          }
+        });
+      }
+
       const searchParams = new URLSearchParams({
         [paginationQueryParms.pageIndex]: String(page),
         [paginationQueryParms.pageSize]: String(ITEMS_PER_PAGE),
-        ...params,
+        ...sanitizedParams,
       });
 
       const parametizedEndpoint = `${endpoint}?${searchParams.toString()}`;

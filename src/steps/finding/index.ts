@@ -6,13 +6,48 @@ import {
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
-import { Entities, Relationships, Steps } from '../constants';
+import {
+  Entities,
+  INGESTION_SOURCE_IDS,
+  Relationships,
+  Steps,
+  V1_SEVERITIES_VALUES,
+  V2_SEVERITIES_VALUES,
+} from '../constants';
 import { createSonarqubeClient } from '../../provider';
 import { SonarqubeIntegrationConfig } from '../../types';
 import { SonarqubeProject } from '../../provider/types/v1';
-import { createFindingEntity } from './converter';
+import {
+  createFindingEntity,
+  createFindingEntityIdentifier,
+} from './converter';
+import { APIVersion } from '../../provider/types/common';
+import { createProjectEntityIdentifier } from '../project/converter';
 
-const severityList = ['INFO', 'MINOR', 'MAJOR', 'CRITICAL', 'BLOCKER'];
+function getFilterParams(
+  instanceConfig: SonarqubeIntegrationConfig,
+): NodeJS.Dict<string | string[]> {
+  const { apiVersion, findingStatus, findingsIngestSinceDays, findingTypes } =
+    instanceConfig;
+
+  const filterParams: NodeJS.Dict<string | string[]> = {};
+
+  const statusKey = apiVersion === APIVersion.V1 ? 'status' : 'issueStatuses';
+  const typesKey =
+    apiVersion === APIVersion.V1 ? 'types' : 'impactSoftwareQualities';
+
+  if (findingStatus) {
+    filterParams[statusKey] = findingStatus;
+  }
+  if (findingTypes) {
+    filterParams[typesKey] = findingTypes;
+  }
+  if (findingsIngestSinceDays) {
+    filterParams['createdInLast'] = `${findingsIngestSinceDays}d`;
+  }
+
+  return filterParams;
+}
 
 export async function fetchFindings({
   instance,
@@ -20,6 +55,14 @@ export async function fetchFindings({
   logger,
 }: IntegrationStepExecutionContext<SonarqubeIntegrationConfig>) {
   const client = createSonarqubeClient(instance.config, logger);
+
+  const severityList = instance.config.findingSeverities
+    ? instance.config.findingSeverities
+    : instance.config.apiVersion === APIVersion.V1
+      ? V1_SEVERITIES_VALUES
+      : V2_SEVERITIES_VALUES;
+
+  const filterParams = getFilterParams(instance.config);
 
   await jobState.iterateEntities(
     { _type: Entities.PROJECT._type },
@@ -35,23 +78,37 @@ export async function fetchFindings({
       // we'll hit the 10,000 limit impose by the API.  We're currently filtering
       // by project and severity.
       for (const severity of severityList) {
+        if (instance.config.apiVersion == APIVersion.V1) {
+          filterParams['severities'] = severity;
+        } else {
+          filterParams['impactSeverities'] = severity;
+        }
+
         await client.iterateProjectFindings(
           async (finding) => {
             const findingEntity = createFindingEntity(finding);
 
-            if (!(await jobState.hasKey(findingEntity._key))) {
+            if (!jobState.hasKey(findingEntity._key)) {
               await jobState.addEntity(findingEntity);
             }
 
-            await jobState.addRelationship(
-              createDirectRelationship({
-                _class: RelationshipClass.HAS,
-                from: projectEntity,
-                to: findingEntity,
-              }),
-            );
+            if (
+              !jobState.hasKey(
+                `${createProjectEntityIdentifier(
+                  project.key,
+                )}|has|${createFindingEntityIdentifier(finding.key)}`,
+              )
+            ) {
+              await jobState.addRelationship(
+                createDirectRelationship({
+                  _class: RelationshipClass.HAS,
+                  from: projectEntity,
+                  to: findingEntity,
+                }),
+              );
+            }
           },
-          { componentKeys: project.key, severities: severity },
+          { componentKeys: project.key, ...filterParams },
         );
       }
     },
@@ -62,6 +119,7 @@ export const findingSteps: IntegrationStep<SonarqubeIntegrationConfig>[] = [
   {
     id: Steps.FINDINGS,
     name: 'Fetch Project Findings',
+    ingestionSourceId: INGESTION_SOURCE_IDS.FINDINGS,
     entities: [Entities.FINDING],
     executionHandler: fetchFindings,
     relationships: [Relationships.PROJECT_HAS_FINDING],

@@ -1,6 +1,6 @@
 {
   "name": "@jupiterone/graph-sonarqube",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Sonarqube integration for JupiterOne",
   "repository": {
     "type": "git",
@@ -31,13 +31,14 @@
     "prepack": "yarn build"
   },
   "peerDependencies": {
-    "@jupiterone/integration-sdk-core": "^8.30.0"
+    "@jupiterone/integration-sdk-core": "^13.1.0"
   },
   "devDependencies": {
-    "@jupiterone/integration-sdk-core": "^8.30.0",
-    "@jupiterone/integration-sdk-dev-tools": "^8.30.0",
-    "@jupiterone/integration-sdk-testing": "^8.30.0",
-    "@types/node-fetch": "^2.5.10"
+    "@jupiterone/integration-sdk-core": "^13.1.0",
+    "@jupiterone/integration-sdk-dev-tools": "^13.1.0",
+    "@jupiterone/integration-sdk-testing": "^13.1.0",
+    "@types/node": "^22.0.2",
+    "@types/node-fetch": "^2.6.11"
   },
   "dependencies": {
     "node-fetch": "^2.6.1"
